@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="CompAct-Bench — a benchmark for working-context compaction in long-horizon agent tasks." />
+    <meta name="theme-color" content="#12110f" />
+    <title>CompAct-Bench / working-context compaction</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="noise" aria-hidden="true"></div>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="CompAct-Bench home">
+        <span class="brand-mark">C/B</span>
+        <span>CompAct<span class="brand-slash">/</span>Bench</span>
+      </a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="#signal">Signal</a>
+        <a href="#protocol">Protocol</a>
+        <a href="#results">Results</a>
+        <a href="#failure-modes">Failure modes</a>
+      </nav>
+      <a class="header-link" href="assets/compact-bench-paper.pdf">Read paper <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <main id="top">
+      <section class="hero wrap" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="pulse-dot"></span> ICLR 2026 · process-level benchmark</div>
+          <h1 id="hero-title">What survives<br /><em>the rewind?</em></h1>
+          <p class="hero-dek">
+            CompAct-Bench measures whether an agent can keep working after its accumulated context is compacted — not whether a summary sounds good, but whether execution still lands.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#results">See the signal <span aria-hidden="true">↓</span></a>
+            <a class="button button-ghost" href="assets/compact-bench-paper.pdf">Open PDF <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="hero-meta">
+            <span>Jiayi Chen<sup>*</sup> · Lizhe Chen<sup>*</sup> · et al.</span>
+            <span>Fudan NLP Lab × Tencent HY × SIGS</span>
+          </div>
+        </div>
+        <div class="hero-machine" aria-label="A tape-machine visualization of context being compacted">
+          <div class="machine-label">WORKING CONTEXT // 010</div>
+          <div class="machine-screen">
+            <div class="screen-top"><span>BOUNDARY</span><strong>50%</strong><span>LIVE</span></div>
+            <div class="signal-line"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="screen-readout"><span>H<sub>b</sub></span><b>→</b><span>M<sub>b</sub></span><strong>10%</strong></div>
+          </div>
+          <div class="reels" aria-hidden="true">
+            <div class="reel reel-left"><span></span></div>
+            <div class="reel reel-right"><span></span></div>
+            <div class="tape-path"></div>
+          </div>
+          <div class="machine-footer"><span>RECORD / COMPACT / RESUME</span><span>CB-200</span></div>
+        </div>
+      </section>
+
+      <section class="stat-strip" aria-label="Benchmark headline statistics">
+        <div class="stat"><strong>200</strong><span>compaction<br />instances</span></div>
+        <div class="stat"><strong>12</strong><span>frontier<br />compactors</span></div>
+        <div class="stat stat-highlight"><strong>56.7<span>%</span></strong><span>average post-<br />compaction accuracy</span></div>
+        <div class="stat"><strong>68.5<span>%</span></strong><span>best model<br />accuracy</span></div>
+        <div class="stat"><strong>10<span>%</span></strong><span>target context<br />retention</span></div>
+      </section>
+
+      <section class="section wrap signal-section" id="signal" aria-labelledby="signal-title">
+        <div class="section-kicker">01 / THE SIGNAL</div>
+        <div class="two-col">
+          <div>
+            <h2 id="signal-title">A shorter context can still lose the plot.</h2>
+            <p class="lead">Long-horizon agents accumulate actions, observations, failed attempts, and partial progress until the working context hits a hard boundary. CompAct-Bench asks a consequential question: <strong>can the same agent finish the task after that history is compacted?</strong></p>
+          </div>
+          <div class="pull-quote"><span class="quote-mark">“</span><p>Compaction is not generic summary generation. It is an execution-critical capability.</p><span class="quote-credit">— CompAct-Bench, 2026</span></div>
+        </div>
+        <div class="domain-grid">
+          <article class="domain-card domain-search">
+            <div class="domain-tag">SEARCH / 01</div>
+            <h3>BrowseComp</h3>
+            <p>Multi-step information seeking where evidence largely lives in the interaction history.</p>
+            <div class="domain-number"><strong>79</strong><span>tasks</span></div>
+          </article>
+          <article class="domain-card domain-code">
+            <div class="domain-tag">CODING / 02</div>
+            <h3>SWE-bench</h3>
+            <p>Repository-backed software engineering where progress can persist in the environment.</p>
+            <div class="domain-number"><strong>96</strong><span>tasks</span></div>
+          </article>
+          <article class="domain-card domain-workspace">
+            <div class="domain-tag">WORKSPACE / 03</div>
+            <h3>CompanyBench</h3>
+            <p>Tool-rich workspace tasks with files, persistent state, and long trajectories.</p>
+            <div class="domain-number"><strong>25</strong><span>tasks</span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section protocol-section" id="protocol" aria-labelledby="protocol-title">
+        <div class="wrap">
+          <div class="section-kicker">02 / THE PROTOCOL</div>
+          <div class="protocol-heading">
+            <h2 id="protocol-title">A controlled rewind, then a fresh run.</h2>
+            <p>Every instance starts from a trajectory the executor already solved. The only thing that changes is the working context crossing a boundary.</p>
+          </div>
+          <div class="protocol-track">
+            <div class="protocol-step">
+              <div class="step-index">01</div>
+              <div class="step-marker marker-solid"></div>
+              <h3>Collect</h3>
+              <p>Run the fixed executor three times. Keep only tasks solved every time, then record a successful reference trajectory.</p>
+            </div>
+            <div class="protocol-step">
+              <div class="step-index">02</div>
+              <div class="step-marker marker-cut"></div>
+              <h3>Compact</h3>
+              <p>Cut the trajectory at 25%, 50%, or 75%. An evaluated LM turns <em>H<sub>b</sub></em> into a 10% representation <em>M<sub>b</sub></em>.</p>
+            </div>
+            <div class="protocol-step">
+              <div class="step-index">03</div>
+              <div class="step-marker marker-replay"></div>
+              <h3>Resume</h3>
+              <p>Restore the boundary environment and give the executor the original task, compacted context, and a matched action budget.</p>
+            </div>
+            <div class="protocol-step protocol-outcome">
+              <div class="step-index">04</div>
+              <div class="step-marker marker-signal"></div>
+              <h3>Measure</h3>
+              <p>Success means the continuation completes the original task. No reference summary. No extra turns.</p>
+            </div>
+          </div>
+          <div class="equation"><span>Acc(C<sub>φ</sub>)</span><b>=</b><span class="fraction"><i>successful continuations</i><em>all compaction instances</em></span></div>
+        </div>
+      </section>
+
+      <section class="section results-section wrap" id="results" aria-labelledby="results-title">
+        <div class="section-kicker">03 / THE RESULTS</div>
+        <div class="results-intro">
+          <div><h2 id="results-title">The tape gets thinner.<br /><em>The task gets harder.</em></h2></div>
+          <p>At a 10% retention target, every frontier model loses a meaningful amount of execution-critical state. The spread is wide: 46.0% to 68.5% overall accuracy.</p>
+        </div>
+        <div class="model-board">
+          <div class="board-head"><span>COMPACTOR</span><span>SEARCH</span><span>CODING</span><span>WORKSPACE</span><span>OVERALL</span></div>
+          <div class="model-row best"><span class="model-name"><b>01</b> Claude Opus 5 <small>MAX</small></span><span style="--bar:62%">62.0</span><span style="--bar:81.2%">81.2</span><span style="--bar:40%">40.0</span><span class="overall">68.5%</span></div>
+          <div class="model-row"><span class="model-name"><b>02</b> Gemini 3.8 Flash <small>HIGH</small></span><span style="--bar:57%">57.0</span><span style="--bar:75%">75.0</span><span style="--bar:56%">56.0</span><span class="overall">65.5%</span></div>
+          <div class="model-row"><span class="model-name"><b>03</b> Kimi K3 <small>MAX</small></span><span style="--bar:50.6%">50.6</span><span style="--bar:79.2%">79.2</span><span style="--bar:32%">32.0</span><span class="overall">62.0%</span></div>
+          <div class="model-row"><span class="model-name"><b>04</b> GPT-5.6-Sol <small>MAX</small></span><span style="--bar:51.9%">51.9</span><span style="--bar:76%">76.0</span><span style="--bar:20%">20.0</span><span class="overall">59.5%</span></div>
+          <div class="model-row"><span class="model-name"><b>05</b> DeepSeek V4 Pro <small>MAX</small></span><span style="--bar:44.3%">44.3</span><span style="--bar:72.4%">72.4</span><span style="--bar:44%">44.0</span><span class="overall">57.8%</span></div>
+          <div class="model-row"><span class="model-name"><b>06</b> HY3 <small>HIGH</small></span><span style="--bar:44.3%">44.3</span><span style="--bar:72.9%">72.9</span><span style="--bar:40%">40.0</span><span class="overall">57.5%</span></div>
+          <div class="board-foot"><span>POST-COMPACTION TASK ACCURACY (%)</span><span>HIGHER IS BETTER</span></div>
+        </div>
+        <div class="stage-grid">
+          <article class="stage-card stage-search">
+            <div class="stage-head"><span>SEARCH</span><b>↘</b></div>
+            <h3>History-resident evidence fades</h3>
+            <div class="stage-bars"><div><span>25%</span><i style="--height:52.9%"></i><strong>52.9</strong></div><div><span>50%</span><i style="--height:42.6%"></i><strong>42.6</strong></div><div><span>75%</span><i style="--height:34.6%"></i><strong>34.6</strong></div></div>
+          </article>
+          <article class="stage-card stage-coding">
+            <div class="stage-head"><span>CODING</span><b>↗</b></div>
+            <h3>Persisted progress carries forward</h3>
+            <div class="stage-bars"><div><span>25%</span><i style="--height:64%"></i><strong>64.0</strong></div><div><span>50%</span><i style="--height:72.7%"></i><strong>72.7</strong></div><div><span>75%</span><i style="--height:86.1%"></i><strong>86.1</strong></div></div>
+          </article>
+          <article class="stage-card stage-workspace">
+            <div class="stage-head"><span>WORKSPACE</span><b>∿</b></div>
+            <h3>State distribution is non-monotonic</h3>
+            <div class="wave-readout"><span>25%</span><i></i><span>50%</span><i></i><span>75%</span></div><p>Where state lives matters as much as how much context exists.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section failure-section" id="failure-modes" aria-labelledby="failure-title">
+        <div class="wrap">
+          <div class="section-kicker">04 / FAILURE MODES</div>
+          <div class="failure-intro"><h2 id="failure-title">Two ways to lose the thread.</h2><p>Compaction failures are not one thing. Omission tends to make agents repeat themselves; distortion makes them believe the wrong state.</p></div>
+          <div class="failure-grid">
+            <article class="failure-card failure-omit"><div class="failure-no">A</div><div><h3>Omissions → exhaustion</h3><p>Critical omissions and progress/state loss make the executor reopen work it already finished. Budget drains into redundant tools and repeated questions.</p><div class="error-tags"><span>CO</span><span>PSL</span><span>LR</span></div></div></article>
+            <article class="failure-card failure-distort"><div class="failure-no">B</div><div><h3>Distortion → premature commitment</h3><p>Factual or constraint distortion turns tentative evidence into a settled conclusion. The agent commits early, skips verification, or follows the wrong goal.</p><div class="error-tags"><span>FD</span><span>PC</span><span>CGD</span></div></div></article>
+          </div>
+          <div class="failure-callout"><strong>56.7%</strong><span>of early failures included premature commitment.</span><b>vs.</b><strong>46.0%</strong><span>of budget-exhausted cases.</span></div>
+        </div>
+      </section>
+
+      <section class="closing wrap" aria-labelledby="closing-title">
+        <div class="closing-stamp">KEEP<br />STATE<br />ALIVE</div>
+        <div><div class="section-kicker">05 / TAKEAWAY</div><h2 id="closing-title">A good compactor does more than remember.</h2><p>It carries forward what the next action needs: unresolved questions, rejected paths, externalized progress, and the exact boundary between evidence and belief.</p><a class="button button-primary" href="assets/compact-bench-paper.pdf">Read the full paper <span aria-hidden="true">↗</span></a></div>
+      </section>
+    </main>
+
+    <footer class="site-footer wrap">
+      <div><span class="brand-mark">C/B</span> CompAct-Bench</div>
+      <div>Fudan University · Hunyuan Team, Tencent · Tsinghua SIGS</div>
+      <div>© <span id="year">2026</span> / open benchmark page</div>
+    </footer>
+    <script src="script.js"></script>
+  </body>
+</html>
