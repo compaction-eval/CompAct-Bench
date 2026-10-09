@@ -10,11 +10,11 @@
 
   const ROLE = {
     critical: ['Critical evidence', 'var(--bad)'],
-    constraint: ['Task constraint', 'var(--ds-w)'],
-    rejected: ['Dead end · resolved', '#c98478'],
-    hunch: ['Unverified hunch', 'var(--rose)'],
-    thread: ['Open threads', 'var(--ds-c)'],
-    persisted: ['State on disk · pointer', 'var(--ds-c)'],
+    constraint: ['Task constraint', 'var(--d-w)'],
+    rejected: ['Dead end · resolved', 'var(--orange)'],
+    hunch: ['Unverified hunch', '#C46686'],
+    thread: ['Open threads', 'var(--d-c)'],
+    persisted: ['State on disk · pointer', 'var(--d-c)'],
     noise: ['Noise', 'var(--muted)']
   };
   const ERRLAB = { critical: 'CO', rejected: 'LR', thread: 'PSL', persisted: 'PSL', constraint: 'CO' };
@@ -238,7 +238,7 @@
       <div class="screen runner" id="gRunner" hidden>
         <div class="runner__hd"><span>Executor · ${d.exec} · resuming from M_b</span><span>Actions <b id="gAct">0</b> / ${m.budget}</span></div>
         <div class="track" id="gTrack">${Array.from({ length: m.budget }, (_, k) => `<i data-n="${k + 1}"></i>`).join('')}</div>
-        <div class="track__key"><span><i style="background:var(--phos)"></i>progress</span><span><i style="background:repeating-linear-gradient(45deg,#dcc4f0 0 3px,rgba(220, 196, 240, .4) 3px 6px)"></i>repeated / recovery</span><span><i style="background:var(--ds-w)"></i>verification</span><span><i style="background:var(--bad)"></i>failure</span></div>
+        <div class="track__key"><span><i style="background:var(--phos)"></i>progress</span><span><i style="background:repeating-linear-gradient(45deg,var(--amber) 0 3px,rgba(138, 104, 150, .28) 3px 6px)"></i>repeated / recovery</span><span><i style="background:var(--ds-w)"></i>verification</span><span><i style="background:var(--bad)"></i>failure</span></div>
         <div class="rlog" id="gLog"></div>
       </div>
       <div class="debrief" id="gDebrief" hidden></div>`;

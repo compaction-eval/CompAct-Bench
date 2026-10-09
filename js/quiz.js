@@ -57,7 +57,7 @@
 
   let step = 0, vec = [0, 0, 0], busy = false;
 
-  const patchSVG = '<svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9 4.9 19.1" stroke="#f6f5f8" stroke-width="2.2" stroke-linecap="round"/></svg>';
+  const patchSVG = '<svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9 4.9 19.1" stroke="#faf9f5" stroke-width="2.2" stroke-linecap="round"/></svg>';
 
   function intro() {
     box.innerHTML = `
@@ -113,11 +113,11 @@
               <div class="badge__cfg">reasoning: ${m.cfg} · overall ${m.o.toFixed(1)}%</div>
               <div class="badge__arch">${arch}</div>
               <div class="badge__photo"><svg viewBox="0 0 200 92" aria-hidden="true">
-                <rect x="1" y="1" width="198" height="90" rx="14" fill="#f6f4f9"/>
-                ${Array.from({ length: 10 }, (_, i) => `<rect x="${16 + i * 12}" y="${30 - (i % 3) * 4}" width="9" height="${22 + (i % 3) * 8}" rx="2.5" fill="${['#a8cdee', '#dcc4f0', '#f3dca0'][i % 3]}" opacity=".8"/>`).join('')}
-                <path d="M140 46 h10" stroke="#726f7a" stroke-width="1.6" stroke-linecap="round"/><path d="M147 42 l4 4 -4 4" fill="none" stroke="#726f7a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                <rect x="160" y="36" width="22" height="20" rx="4" fill="${AXC[bestAx].replace('var(--d-s)', '#a8cdee').replace('var(--d-c)', '#dcc4f0').replace('var(--d-w)', '#f3dca0')}"/>
-                <text x="16" y="80" font-family="Source Serif 4, Georgia, serif" font-style="italic" font-size="12" fill="#3d3b44">10 tokens in, 1 out · r = 10%</text>
+                <rect x="1" y="1" width="198" height="90" rx="14" fill="#eae6db"/>
+                ${Array.from({ length: 10 }, (_, i) => `<rect x="${16 + i * 12}" y="${30 - (i % 3) * 4}" width="9" height="${22 + (i % 3) * 8}" rx="2.5" fill="${['#ac86b9', '#788c5d', '#6a9bcc'][i % 3]}" opacity=".55"/>`).join('')}
+                <path d="M140 46 h10" stroke="#73726c" stroke-width="1.6" stroke-linecap="round"/><path d="M147 42 l4 4 -4 4" fill="none" stroke="#73726c" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="160" y="36" width="22" height="20" rx="4" fill="${AXC[bestAx].replace('var(--d-s)', '#ac86b9').replace('var(--d-c)', '#788c5d').replace('var(--d-w)', '#6a9bcc')}"/>
+                <text x="16" y="80" font-family="Source Serif 4, Georgia, serif" font-style="italic" font-size="12" fill="#3d3d3a">10 tokens in, 1 out · r = 10%</text>
               </svg></div>
               <div class="badge__bars">${AX.map(a => `<div class="bbar"><span>${AXN[a]}</span><i><s style="--bc:${AXC[a]};background:${AXC[a]}" data-w="${m[a][3]}"></s></i><b>${m[a][3].toFixed(1)}</b></div>`).join('')}</div>
             </div>

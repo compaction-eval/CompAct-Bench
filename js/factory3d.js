@@ -25,8 +25,8 @@
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = T.PCFSoftShadowMap;
   const THEMES = {
-    light: { bg: 0xfcfbfd, floor: 0xf6f4f9, g1: 0xe6e2ec, g2: 0xf0eef5, sky: 0xffffff, gnd: 0xf0eef5, hemi: .82, paint: 'rgba(22,21,26,.06)' },
-    dark: { bg: 0x24232a, floor: 0x1c1b22, g1: 0x3c3944, g2: 0x312e38, sky: 0xe8e4f2, gnd: 0x2a2730, hemi: .6, paint: 'rgba(246,245,248,.07)' }
+    light: { bg: 0xf3f1ea, floor: 0xeae6db, g1: 0xdbd5c8, g2: 0xe6e1d2, sky: 0xffffff, gnd: 0xe3ddce, hemi: .78, paint: 'rgba(20,20,19,.07)' },
+    dark: { bg: 0x262624, floor: 0x1f1e1d, g1: 0x3a3936, g2: 0x2f2e2c, sky: 0xf4efe6, gnd: 0x2a2826, hemi: .6, paint: 'rgba(250,249,245,.07)' }
   };
   const themeOf = () => (document.documentElement.dataset.theme === 'dark' ? THEMES.dark : THEMES.light);
   let TH = themeOf();
@@ -55,13 +55,13 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => redraws.forEach(f => f()));
   const mStd = (color, o = {}) => new T.MeshStandardMaterial(Object.assign({ color, roughness: .7, metalness: 0 }, o));
   const M = {
-    metal: mStd(0x8c8996, { roughness: .6, metalness: .1 }),
-    metal2: mStd(0xb6b2be, { roughness: .62, metalness: .05 }),
-    cream: mStd(0xfcfbfd, { roughness: .8 }),
-    beige: mStd(0xe7e3ee, { roughness: .75 }),
-    red: mStd(0x7a5a9c, { roughness: .6 }),
-    dark: mStd(0x3d3b44, { roughness: .9 }),
-    steel: mStd(0xd2ceda, { roughness: .45, metalness: .25 })
+    metal: mStd(0x8a867d, { roughness: .6, metalness: .1 }),
+    metal2: mStd(0xb8b3a7, { roughness: .62, metalness: .05 }),
+    cream: mStd(0xfaf9f5, { roughness: .8 }),
+    beige: mStd(0xece6da, { roughness: .75 }),
+    red: mStd(0xac86b9, { roughness: .6 }),
+    dark: mStd(0x3d3d3a, { roughness: .9 }),
+    steel: mStd(0xd6d1c5, { roughness: .45, metalness: .25 })
   };
   const box = (w, h, d, mat, x, y, z, parent, shadow = true) => {
     const m = new T.Mesh(new T.BoxGeometry(w, h, d), mat);
@@ -80,15 +80,15 @@
 
   /* ---------- lights ---------- */
   const hemi = new T.HemisphereLight(TH.sky, TH.gnd, TH.hemi); scene.add(hemi);
-  const key = new T.DirectionalLight(0xf6f3fb, 1.05);
+  const key = new T.DirectionalLight(0xfff6ea, 1.05);
   key.castShadow = true;
   key.shadow.mapSize.set(2048, 2048);
   Object.assign(key.shadow.camera, { left: -30, right: 30, top: 22, bottom: -22, near: 1, far: 90 });
   key.shadow.bias = -.0004; key.shadow.normalBias = .03;
   scene.add(key, key.target);
-  const rim = new T.DirectionalLight(0xd9cceb, .35); rim.position.set(-16, 9, -14); scene.add(rim);
-  const pressLight = new T.PointLight(0x7a5a9c, 0, 14, 2); pressLight.position.set(PX, 2.6, 2.2); scene.add(pressLight);
-  const screenLight = new T.PointLight(0xe8e2f4, .4, 9, 2); screenLight.position.set(CX + .6, 3.4, 2.2); scene.add(screenLight);
+  const rim = new T.DirectionalLight(0xe2d0e5, .3); rim.position.set(-16, 9, -14); scene.add(rim);
+  const pressLight = new T.PointLight(0xac86b9, 0, 14, 2); pressLight.position.set(PX, 2.6, 2.2); scene.add(pressLight);
+  const screenLight = new T.PointLight(0xefe6f0, .4, 9, 2); screenLight.position.set(CX + .6, 3.4, 2.2); scene.add(screenLight);
 
   /* ---------- floor ---------- */
   const floorMat = mStd(TH.floor, { roughness: .95 });
@@ -101,7 +101,7 @@
     grid.material.transparent = true; grid.material.opacity = .8; grid.position.y = .006; scene.add(grid);
   };
   mkGrid();
-  ['#dcc4f0', '#f3dca0'].forEach((c, i) => {
+  ['#ac86b9', '#d2b2cd'].forEach((c, i) => {
     const p = new T.Mesh(new T.PlaneGeometry(BIN_X + 3 - (BS - 4), .12), mStd(c, { roughness: .9 }));
     p.rotation.x = -Math.PI / 2; p.position.set((BIN_X + 3 + BS - 4) / 2, .012, BW / 2 + 1.0 + i * .26);
     p.receiveShadow = true; scene.add(p);
@@ -115,8 +115,8 @@
   paintMesh.rotation.x = -Math.PI / 2; paintMesh.position.set(PX + 2.5, .014, BW / 2 + 2.9); scene.add(paintMesh);
   const rr = (g, x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
   const hazard = canvasTex(512, 320, (g, w, h) => {
-    rr(g, 6, 6, w - 12, h - 12, 40); g.fillStyle = '#e6e3ee'; g.fill();
-    g.setLineDash([18, 14]); g.lineWidth = 4; g.strokeStyle = 'rgba(122,90,156,.7)';
+    rr(g, 6, 6, w - 12, h - 12, 40); g.fillStyle = '#ebe6da'; g.fill();
+    g.setLineDash([18, 14]); g.lineWidth = 4; g.strokeStyle = 'rgba(172,134,185,.7)';
     rr(g, 26, 26, w - 52, h - 52, 28); g.stroke();
   });
   const pad = new T.Mesh(new T.PlaneGeometry(7.6, 4.8), mStd(0xffffff, { map: hazard, roughness: .9, transparent: true }));
@@ -125,12 +125,12 @@
   /* ---------- conveyor ---------- */
   const L = BE - BS, MID = (BS + BE) / 2;
   const beltTex = canvasTex(256, 64, (g, w, h) => {
-    g.fillStyle = '#46454c'; g.fillRect(0, 0, w, h);
-    g.fillStyle = '#54535c';
+    g.fillStyle = '#4a4945'; g.fillRect(0, 0, w, h);
+    g.fillStyle = '#56554f';
     for (let i = 0; i < 8; i++) { const x = i * 32; g.beginPath(); g.moveTo(x, 0); g.lineTo(x + 14, h / 2); g.lineTo(x, h); g.lineTo(x + 8, h); g.lineTo(x + 22, h / 2); g.lineTo(x + 8, 0); g.fill(); }
   });
   beltTex.wrapS = T.RepeatWrapping; beltTex.repeat.set(L / 2, 1);
-  const beltSide = mStd(0x3d3b44, { roughness: .85 });
+  const beltSide = mStd(0x3d3d3a, { roughness: .85 });
   const belt = new T.Mesh(new T.BoxGeometry(L, .16, BW), [beltSide, beltSide, mStd(0xffffff, { map: beltTex, roughness: .82, metalness: .1 }), beltSide, beltSide, beltSide]);
   belt.position.set(MID, BELT_Y - .08, 0); belt.receiveShadow = true; scene.add(belt);
   box(L + .6, .46, .24, M.metal2, MID, BELT_Y - .12, BW / 2 + .12);
@@ -142,14 +142,14 @@
 
   /* ---------- tokens ---------- */
   const WORDS = ['search', 'grep', 'Lyons', '1983', 'PhD', 'def', 'sqf', 'spam', 'Line', 'verify', 'y−1', 'Peres', 'PDF', 'TODO', '404', '→', '{ }', 'ok', 'invoice', 'prize', 'AMS', 'diff', 'retry', 'cite'];
-  const DCOL = ['#a8cdee', '#dcc4f0', '#f3dca0'];
+  const DCOL = ['#ac86b9', '#788c5d', '#6a9bcc'];
   const tokMats = WORDS.map((w, i) => mStd(0xffffff, {
     roughness: .8,
     map: canvasTex(128, 128, g => {
-      g.fillStyle = '#f7f6fa'; g.fillRect(0, 0, 128, 128);
+      g.fillStyle = '#fdfcf8'; g.fillRect(0, 0, 128, 128);
       g.fillStyle = DCOL[i % 3]; g.fillRect(0, 112, 128, 16);
-      g.strokeStyle = '#d4d0dc'; g.lineWidth = 4; g.strokeRect(2, 2, 124, 124);
-      g.fillStyle = '#16151a'; g.font = `500 ${w.length > 5 ? 26 : w.length > 3 ? 34 : 44}px "JetBrains Mono", monospace`;
+      g.strokeStyle = '#ddd7ca'; g.lineWidth = 4; g.strokeRect(2, 2, 124, 124);
+      g.fillStyle = '#141413'; g.font = `500 ${w.length > 5 ? 26 : w.length > 3 ? 34 : 44}px "JetBrains Mono", monospace`;
       g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(w, 64, 56);
     })
   }));
@@ -185,8 +185,8 @@
   const head = new T.Group(); pressG.add(head);
   box(4.9, .56, 2.3, M.red, 0, 0, 0, head);
   const stripeTex = canvasTex(512, 32, (g, w, h) => {
-    g.fillStyle = '#f6f5f8'; g.fillRect(0, 0, w, h);
-    g.fillStyle = '#5c4578'; for (let x = 24; x < w; x += 40) { g.beginPath(); g.arc(x, h / 2, 5, 0, Math.PI * 2); g.fill(); }
+    g.fillStyle = '#faf9f5'; g.fillRect(0, 0, w, h);
+    g.fillStyle = '#8a6896'; for (let x = 24; x < w; x += 40) { g.beginPath(); g.arc(x, h / 2, 5, 0, Math.PI * 2); g.fill(); }
   });
   const stripe = new T.Mesh(new T.PlaneGeometry(4.9, .22), new T.MeshStandardMaterial({ map: stripeTex, roughness: .6 }));
   stripe.position.set(0, -.12, 1.152); head.add(stripe);
@@ -194,7 +194,7 @@
   const HEAD_TOUCH = BELT_Y + TS + HEAD_H / 2, HEAD_HIT = BELT_Y + TS * .2 + HEAD_H / 2;
   const setHead = y => { head.position.y = y; const top = y + HEAD_H / 2, bot = 5.5; rod.scale.y = Math.max(.01, bot - top); rod.position.set(0, (bot + top) / 2, 0); };
   setHead(HEAD_REST);
-  const ring = new T.Mesh(new T.RingGeometry(.5, .62, 40), new T.MeshBasicMaterial({ color: 0x7a5a9c, transparent: true, opacity: 0, depthWrite: false, toneMapped: false }));
+  const ring = new T.Mesh(new T.RingGeometry(.5, .62, 40), new T.MeshBasicMaterial({ color: 0xac86b9, transparent: true, opacity: 0, depthWrite: false, toneMapped: false }));
   ring.rotation.x = -Math.PI / 2; ring.position.set(PX, BELT_Y + .02, 0); scene.add(ring);
 
   /* ---------- sparks ---------- */
@@ -206,7 +206,7 @@
   const dot = canvasTex(64, 64, g => { const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.4, 'rgba(255,255,255,.5)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); });
   const sparkMat = new T.PointsMaterial({ size: 8, sizeAttenuation: false, map: dot, vertexColors: true, transparent: true, depthWrite: false, toneMapped: false });
   const sparks = new T.Points(sGeo, sparkMat); scene.add(sparks);
-  const SC = [new T.Color(0xdcc4f0), new T.Color(0xf3dca0), new T.Color(0xa8cdee)], sBg = new T.Color(TH.bg), sTmp = new T.Color(), sKind = new Uint8Array(NS);
+  const SC = [new T.Color(0xac86b9), new T.Color(0xd2b2cd), new T.Color(0x788c5d)], sBg = new T.Color(TH.bg), sTmp = new T.Color(), sKind = new Uint8Array(NS);
   let sIdx = 0;
   const emitSparks = n => {
     for (let k = 0; k < n; k++) {
@@ -234,14 +234,14 @@
 
   /* ---------- M_b blocks ---------- */
   const blockLabel = canvasTex(256, 192, (g, w, h) => {
-    g.fillStyle = '#7a5a9c'; g.fillRect(0, 0, w, h);
-    g.fillStyle = '#f6f5f8'; g.fillRect(0, h - 30, w, 30);
+    g.fillStyle = '#ac86b9'; g.fillRect(0, 0, w, h);
+    g.fillStyle = '#faf9f5'; g.fillRect(0, h - 30, w, 30);
     g.font = 'italic 400 80px "Source Serif 4", Georgia, serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
     g.fillText('M', w / 2 - 12, h / 2 - 16);
     g.font = 'italic 400 44px "Source Serif 4", Georgia, serif'; g.fillText('b', w / 2 + 30, h / 2 + 4);
-    g.fillStyle = '#5c4578'; g.font = '500 20px "JetBrains Mono", monospace'; g.fillText('r = 10%', w / 2, h - 15);
+    g.fillStyle = '#8a6896'; g.font = '500 20px "JetBrains Mono", monospace'; g.fillText('r = 10%', w / 2, h - 15);
   });
-  const amberSide = new T.MeshStandardMaterial({ color: 0x7a5a9c, emissive: 0x7a5a9c, emissiveIntensity: .12, roughness: .7 });
+  const amberSide = new T.MeshStandardMaterial({ color: 0xac86b9, emissive: 0xac86b9, emissiveIntensity: .12, roughness: .7 });
   const blockTop = new T.MeshStandardMaterial({ map: blockLabel, emissive: 0xffffff, emissiveMap: blockLabel, emissiveIntensity: .12, roughness: .7 });
   const blockGeo = new T.BoxGeometry(1.25, .5, .92);
   const blockMats = [amberSide, amberSide, blockTop, amberSide, amberSide, amberSide];
@@ -258,13 +258,13 @@
   let comboI = (Math.random() * combos.length) | 0;
   const scr = { mode: 'idle', k: 0, B: 10, plan: { ok: true, early: false, k: 0 }, combo: combos[comboI], blink: true };
   const UI = 'Inter, system-ui, sans-serif', SERIF = '"Source Serif 4", Georgia, serif', MONO = '"JetBrains Mono", monospace';
-  const OKC = '#8fd0b4', BADC = '#f0a090', CLAY = '#dcc4f0', INK = '#16151a', MUT = '#726f7a';
+  const OKC = '#5e7d4a', BADC = '#bf4d43', CLAY = '#ac86b9', INK = '#141413', MUT = '#73726c';
   const scrTex = canvasTex(512, 376, (g, w, h) => {
-    g.fillStyle = '#f6f5f8'; g.fillRect(0, 0, w, h);
+    g.fillStyle = '#faf9f5'; g.fillRect(0, 0, w, h);
     const [d, b] = scr.combo;
     g.fillStyle = MUT; g.font = `500 22px ${UI}`;
     g.fillText(`Executor · ${DOM[d].bench} · b = ${BND[b]}`, 28, 44);
-    g.fillStyle = 'rgba(22,21,26,.1)'; g.fillRect(28, 60, w - 56, 2);
+    g.fillStyle = 'rgba(20,20,19,.1)'; g.fillRect(28, 60, w - 56, 2);
     if (scr.mode === 'idle') {
       g.fillStyle = INK; g.font = `400 76px ${SERIF}`; g.fillText('Ready' + (scr.blink ? '.' : ''), 28, 152);
       g.fillStyle = MUT; g.font = `italic 400 30px ${SERIF}`; g.fillText('Waiting for the next memory…', 28, 200);
@@ -278,11 +278,11 @@
       g.fillText(`› resume · budget ${scr.B}`, 28, 172);
       const gap = 8, cw = (w - 56 - (scr.B - 1) * gap) / scr.B, pl = scr.plan;
       for (let i = 0; i < scr.B; i++) {
-        let col = 'rgba(22,21,26,.08)';
+        let col = 'rgba(20,20,19,.08)';
         if (i < scr.k) {
           if (pl.ok) col = OKC;
           else if (i === pl.k - 1 && scr.k >= pl.k) col = BADC;
-          else col = (!pl.early && i % 3 === 2) ? '#f3dca0' : CLAY;
+          else col = (!pl.early && i % 3 === 2) ? '#d2b2cd' : CLAY;
         }
         g.fillStyle = col; rr(g, 28 + i * (cw + gap), 200, cw, 44, 8); g.fill();
       }
@@ -306,7 +306,7 @@
   box(.06, .42, 1.1, M.dark, 1.51, 1.12, .5, comp, false);
   box(1.1, .08, .02, M.dark, -.5, 1.45, 1.51, comp, false);
   for (let i = 0; i < 5; i++) box(1.0, .05, .02, M.metal2, .7, .45 + i * .15, 1.51, comp, false);
-  const ledMat = new T.MeshBasicMaterial({ color: 0x0c8f68, toneMapped: false });
+  const ledMat = new T.MeshBasicMaterial({ color: 0x5e7d4a, toneMapped: false });
   const led = new T.Mesh(new T.SphereGeometry(.08, 10, 8), ledMat); led.position.set(-1.1, 1.7, 1.52); comp.add(led);
   const mon = new T.Group(); mon.position.set(0, 2.0, -.3); mon.rotation.y = .4; comp.add(mon);
   box(1.3, .14, 1.1, M.beige, 0, .07, .1, mon);
@@ -320,9 +320,9 @@
 
   /* result sprites */
   const glyph = ok => canvasTex(256, 256, g => {
-    g.fillStyle = ok ? '#0c8f68' : '#e24a22'; g.beginPath(); g.arc(128, 128, 112, 0, Math.PI * 2); g.fill();
-    g.lineWidth = 8; g.strokeStyle = '#f6f5f8'; g.stroke();
-    g.strokeStyle = '#f6f5f8'; g.lineWidth = 22; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath();
+    g.fillStyle = ok ? '#5e7d4a' : '#bf4d43'; g.beginPath(); g.arc(128, 128, 112, 0, Math.PI * 2); g.fill();
+    g.lineWidth = 8; g.strokeStyle = '#faf9f5'; g.stroke();
+    g.strokeStyle = '#faf9f5'; g.lineWidth = 22; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath();
     if (ok) { g.moveTo(74, 132); g.lineTo(112, 172); g.lineTo(184, 88); } else { g.moveTo(84, 84); g.lineTo(172, 172); g.moveTo(172, 84); g.lineTo(84, 172); }
     g.stroke();
   });
@@ -345,9 +345,9 @@
     box(2.0, .1, .12, mStd(col), 0, .47, .84, g);
     return { g, stack: [] };
   };
-  const binOK = mkBin(-1.2, 0x0c8f68), binBad = mkBin(1.2, 0xe24a22);
+  const binOK = mkBin(-1.2, 0x5e7d4a), binBad = mkBin(1.2, 0xbf4d43);
   const cardGeo = new T.BoxGeometry(.95, .12, .7);
-  const cardOK = mStd(0x0c8f68), cardBad = mStd(0xe24a22);
+  const cardOK = mStd(0x788c5d), cardBad = mStd(0xbf4d43);
   const flying = [];
   const ejectCard = ok => {
     const bin = ok ? binOK : binBad;
@@ -513,12 +513,12 @@
         updateBins();
         const sp = ok ? spriteOK : spriteBad; sp.t = 0; sp.s.visible = true;
         ejectCard(ok);
-        ledMat.color.setHex(ok ? 0x0c8f68 : 0xe24a22);
+        ledMat.color.setHex(ok ? 0x5e7d4a : 0xbf4d43);
         setPhase(ok ? 'Pass ✓' : (scr.plan.early ? 'Fail ✗ early stop' : 'Fail ✗ budget out'), scr.combo);
       }
     } else if (compS.st === 'result') {
       compS.t += dt;
-      if (compS.t >= 1.7) { compS.st = 'idle'; scr.mode = 'idle'; scrTex.redraw(); ledMat.color.setHex(0x0c8f68); }
+      if (compS.t >= 1.7) { compS.st = 'idle'; scr.mode = 'idle'; scrTex.redraw(); ledMat.color.setHex(0x5e7d4a); }
     } else {
       compS.blinkT += dt;
       if (compS.blinkT > .5) { compS.blinkT = 0; scr.blink = !scr.blink; scrTex.redraw(); }
