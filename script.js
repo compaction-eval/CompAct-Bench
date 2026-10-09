@@ -170,13 +170,6 @@
     sb.addEventListener('click', () => sb.setAttribute('aria-pressed', String(sfx.toggle())));
     const yr = $('#year'); if (yr) yr.textContent = new Date().getFullYear();
 
-    const kimi = $('#kimiBtn');
-    if (kimi) {
-      const pdf = 'https://compaction-eval.github.io/CompAct-Bench/assets/compact-bench-paper.pdf';
-      const prompt = `The paper we will discuss is "CompAct-Bench: A Benchmark for Working-Context Compaction in Long-Horizon Agent Tasks". The PDF link is ${pdf}. Please answer my questions about this paper.`;
-      const sys = 'You are an academic assistant. The conversation will focus on the paper provided. Answer professionally in English, use markdown format for structured responses, and avoid first person.';
-      kimi.href = `https://kimi.com/_prefill_chat?prefill_prompt=${encodeURIComponent(prompt)}&system_prompt=${encodeURIComponent(sys)}&send_immediately=true`;
-    }
     /* nav: border after hero, progress, hide on scroll-down, active link */
     const nav = $('#nav'), prog = $('#progress'), met = $('#met'), hero = $('#top');
     let lastY = window.scrollY, ticking = false;
