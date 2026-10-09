@@ -215,7 +215,7 @@
       h('span', 'note__flag' + (c.verdict.ok ? ' g' : ''), c.verdict.ok ? 'Key' : 'Culprit', culprit);
       drawStrings(layer, wrap, c.strings, animate);
       verdict.hidden = false;
-      verdict.innerHTML = `<div class="stamp ${c.verdict.ok ? 'ok' : 'bad'}${animate ? ' slam' : ''}">${c.verdict.stamp}</div><div><h4>${c.verdict.head}</h4><p>${c.verdict.body}</p><div class="tags">${c.verdict.tags.map(t => `<span style="--pc:${c.verdict.ok ? 'var(--d-c)' : 'var(--red)'}">${t}</span>`).join('')}</div></div>`;
+      verdict.innerHTML = `<div class="stamp ${c.verdict.ok ? 'ok' : 'bad'}${animate ? ' slam' : ''}">${c.verdict.stamp}</div><div><h4>${c.verdict.head}</h4><p>${c.verdict.body}</p><div class="tags">${c.verdict.tags.map(t => `<span style="--pc:${c.verdict.ok ? 'var(--phos)' : 'var(--bad)'}">${t}</span>`).join('')}</div></div>`;
       hint.innerHTML = 'Case closed. Strings show how the evidence travelled.';
       if (animate) { c.verdict.ok ? sfx.ok() : sfx.stamp(); }
       if (!solved.has(c.id)) { solved.add(c.id); store.set('cb-cases', JSON.stringify([...solved])); folders[i].classList.add('is-solved'); }

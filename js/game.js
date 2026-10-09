@@ -9,12 +9,12 @@
   const { $, $$, h, sleep, sfx, store, animateNum, MODELS, DOM, REDUCED, toast, copyText } = CB;
 
   const ROLE = {
-    critical: ['Critical evidence', 'var(--red)'],
-    constraint: ['Task constraint', 'var(--d-w)'],
-    rejected: ['Dead end · resolved', 'var(--orange)'],
-    hunch: ['Unverified hunch', '#C46686'],
-    thread: ['Open threads', 'var(--d-c)'],
-    persisted: ['State on disk · pointer', 'var(--d-c)'],
+    critical: ['Critical evidence', 'var(--bad)'],
+    constraint: ['Task constraint', 'var(--ds-w)'],
+    rejected: ['Dead end · resolved', '#c98478'],
+    hunch: ['Unverified hunch', 'var(--rose)'],
+    thread: ['Open threads', 'var(--ds-c)'],
+    persisted: ['State on disk · pointer', 'var(--ds-c)'],
     noise: ['Noise', 'var(--muted)']
   };
   const ERRLAB = { critical: 'CO', rejected: 'LR', thread: 'PSL', persisted: 'PSL', constraint: 'CO' };
@@ -238,7 +238,7 @@
       <div class="screen runner" id="gRunner" hidden>
         <div class="runner__hd"><span>Executor · ${d.exec} · resuming from M_b</span><span>Actions <b id="gAct">0</b> / ${m.budget}</span></div>
         <div class="track" id="gTrack">${Array.from({ length: m.budget }, (_, k) => `<i data-n="${k + 1}"></i>`).join('')}</div>
-        <div class="track__key"><span><i style="background:var(--phos)"></i>progress</span><span><i style="background:repeating-linear-gradient(45deg,var(--amber) 0 3px,rgba(198, 97, 63, .25) 3px 6px)"></i>repeated / recovery</span><span><i style="background:var(--ds-w)"></i>verification</span><span><i style="background:var(--bad)"></i>failure</span></div>
+        <div class="track__key"><span><i style="background:var(--phos)"></i>progress</span><span><i style="background:repeating-linear-gradient(45deg,#dcc4f0 0 3px,rgba(220, 196, 240, .4) 3px 6px)"></i>repeated / recovery</span><span><i style="background:var(--ds-w)"></i>verification</span><span><i style="background:var(--bad)"></i>failure</span></div>
         <div class="rlog" id="gLog"></div>
       </div>
       <div class="debrief" id="gDebrief" hidden></div>`;
@@ -330,7 +330,7 @@
       <div class="stamp ${ok ? 'ok' : 'bad'} slam">${ok ? 'Pass' : 'Fail'}</div>
       <div>
         <div class="debrief__rank"><small>Rank ${rank[0]}</small><h4>${rank[1]}</h4><p>${rank[2]}</p></div>
-        <div class="tags">${r.errs.length ? r.errs.map(e => `<span style="--pc:var(--red)">${e}</span>`).join('') : '<span style="--pc:var(--d-c)">No compaction errors</span>'}</div>
+        <div class="tags">${r.errs.length ? r.errs.map(e => `<span style="--pc:var(--bad)">${e}</span>`).join('') : '<span style="--pc:var(--phos)">No compaction errors</span>'}</div>
         <div class="debrief__grid">
           <div class="dbx"><span>Actions used</span><b>${r.used} / ${m.budget}</b></div>
           <div class="dbx"><span>Capacity used</span><b>${(used / m.cap * 100).toFixed(0)}%</b></div>

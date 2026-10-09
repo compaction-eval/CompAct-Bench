@@ -210,7 +210,7 @@
      ------------------------------------------------------------------ */
   function overview() {
     const host = $('#overview-fig'); if (!host) return;
-    const C = { amber: '#C6613F', lit: 'rgba(198, 97, 63, .72)', dim: 'rgba(198, 97, 63, .12)', phos: '#5E7D4A', red: '#BF4D43', rep: 'rgba(212, 162, 127, .5)', s: '#D4A27F', c: '#788C5D', w: '#6A9BCC' };
+    const C = { amber: '#DCC4F0', lit: 'rgba(220, 196, 240, .9)', dim: 'rgba(220, 196, 240, .28)', phos: '#7DCFB0', red: '#F0A090', rep: 'rgba(243, 220, 160, .85)', s: '#A8CDEE', c: '#DCC4F0', w: '#F3DCA0', st: '#6F97C6', ct: '#A684C6', wt: '#C9A45E' };
     const W = 1200, H = 470, N = 24, X0 = 262, STEP = 20, CW = 16;
     const IDX = [6, 12, 18], ROWY = [182, 272, 362], CX0 = 902, CX1 = 1118;
     const BOX = { x: 762, y: 166, w: 70, h: 262 };
@@ -230,7 +230,7 @@
     const chips = KEYS.map((k, i) => {
       const y = 58 + i * 92;
       const r = svg('rect', { x: 30, y, width: 190, height: 72, rx: 12, fill: C[k], 'fill-opacity': .06, stroke: C[k], 'stroke-width': 1 }, s);
-      const t1 = T(46, y + 30, DOM[k].name, 'ov-txt'); t1.style.fill = C[k];
+      const t1 = T(46, y + 30, DOM[k].name, 'ov-txt'); t1.style.fill = C[k + 't'];
       T(46, y + 52, `${DOM[k].tasks} tasks · ${DOM[k].bench}`, 'ov-small');
       const dot = svg('circle', { cx: 204, cy: y + 16, r: 4, fill: C[k], opacity: 0 }, s);
       return { r, dot, y };
@@ -243,13 +243,13 @@
     }
     TS(X0, 134, 'a', '1', 'ov-small'); TS(X0 + STEP, 134, 'o', '1', 'ov-small');
     T(X0 + 11 * STEP, 134, '· · ·', 'ov-small'); TS(X0 + 23 * STEP, 134, 'a', 'T', 'ov-small');
-    const pass = T(X0 + N * STEP + 6, 98, '✓ pass³', 'ov-txt', { opacity: 0 }); pass.style.fill = C.phos;
+    const pass = T(X0 + N * STEP + 6, 98, '✓ pass³', 'ov-txt', { opacity: 0 }); pass.style.fill = '#4E9A78';
     IDX.forEach((ix, k) => {
       const bx = X0 + ix * STEP - 2;
       svg('line', { x1: bx, x2: bx, y1: 58, y2: ROWY[k] + 38, stroke: C.red, 'stroke-width': 1.2, 'stroke-dasharray': '4 4' }, s);
-      const t = T(bx + 4, 64, 'b=' + BND[k], 'ov-small'); t.style.fill = C.red;
+      const t = T(bx + 4, 64, 'b=' + BND[k], 'ov-small'); t.style.fill = '#C47068';
     });
-    const box = svg('rect', { x: BOX.x, y: BOX.y, width: BOX.w, height: BOX.h, rx: 14, fill: 'rgba(198, 97, 63, .05)', stroke: C.amber, 'stroke-width': 1.2, 'stroke-dasharray': '5 4' }, s);
+    const box = svg('rect', { x: BOX.x, y: BOX.y, width: BOX.w, height: BOX.h, rx: 14, fill: 'rgba(220, 196, 240, .2)', stroke: C.amber, 'stroke-width': 1.2, 'stroke-dasharray': '5 4' }, s);
     TS(BOX.x + BOX.w / 2, BOX.y - 12, '3 · C', 'φ', 'ov-hd', { 'text-anchor': 'middle' });
     T(BOX.x + BOX.w / 2, BOX.y + BOX.h / 2 + 4, 'LLM', 'ov-big', { 'text-anchor': 'middle' });
     T(BOX.x + BOX.w / 2, BOX.y + BOX.h / 2 + 26, 'r = 10%', 'ov-small', { 'text-anchor': 'middle' });
@@ -258,10 +258,10 @@
       const full = ix * STEP - 4;
       TS(X0, y - 9, 'H', 'b', 'ov-small').appendChild(document.createTextNode(` · b = ${BND[k]} · ${ix} of ${N} steps`));
       const hb = svg('rect', { x: X0, y, width: 0, height: 30, fill: C.amber, rx: 2 }, s);
-      const hbT = TS(X0 + 8, y + 20, 'H', 'b', 'ov-small', { opacity: 0 }); hbT.style.fill = '#FAF9F5';
+      const hbT = TS(X0 + 8, y + 20, 'H', 'b', 'ov-small', { opacity: 0 }); hbT.style.fill = '#4A3A5C';
       const arr = svg('line', { x1: BOX.x + BOX.w + 4, x2: 855, y1: y + 15, y2: y + 15, stroke: C.amber, 'stroke-width': 1.2, 'marker-end': 'url(#ovah)', opacity: .25 }, s);
       const mb = svg('rect', { x: 860, y, width: 0, height: 30, fill: C.phos, rx: 2 }, s);
-      const mbT = TS(866, y + 20, 'M', 'b', 'ov-small', { opacity: 0 }); mbT.style.fill = '#FAF9F5';
+      const mbT = TS(866, y + 20, 'M', 'b', 'ov-small', { opacity: 0 }); mbT.style.fill = '#3A3050';
       const rem = N - ix, cw = (CX1 - CX0) / rem, cc = [];
       for (let i = 0; i < rem; i++) cc.push(svg('rect', { x: CX0 + i * cw, y: y + 4, width: Math.max(2, cw - 3), height: 22, fill: C.dim }, s));
       const lamp = svg('circle', { cx: 1152, cy: y + 15, r: 13, fill: 'none', stroke: C.dim, 'stroke-width': 2 }, s);
@@ -270,7 +270,7 @@
       return { ix, y, full, rem, hb, hbT, mb, mbT, cc, lamp, lampT, cap, arr };
     });
     T(30, 372, 'Running accuracy', 'ov-hd');
-    const accT = T(30, 412, '--.-%', 'ov-big'); accT.style.fill = C.phos;
+    const accT = T(30, 412, '--.-%', 'ov-big'); accT.style.fill = '#4E9A78';
     const loopT = T(30, 434, 'Loop 0', 'ov-small');
     T(30, 456, 'Acc = successful continuations / all instances', 'ov-small');
 
@@ -330,20 +330,21 @@
         });
         const done = t >= ce + .1;
         const col = pl.ok ? C.phos : C.red;
-        r.lamp.setAttribute('stroke', done ? col : C.dim);
-        r.lamp.setAttribute('fill', done ? (pl.ok ? 'rgba(94, 125, 74, .18)' : 'rgba(191, 77, 67, .18)') : 'none');
+        const colT = pl.ok ? '#4E9A78' : '#C47068';
+        r.lamp.setAttribute('stroke', done ? colT : C.dim);
+        r.lamp.setAttribute('fill', done ? (pl.ok ? 'rgba(125, 207, 176, .35)' : 'rgba(240, 160, 144, .4)') : 'none');
         r.lamp.setAttribute('opacity', fade);
         r.lampT.textContent = done ? (pl.ok ? '✓' : '✗') : '';
-        r.lampT.style.fill = col;
+        r.lampT.style.fill = colT;
         r.cap.textContent = done ? (pl.ok ? 'Complete' : pl.early ? 'Early stop' : 'Budget out') : '';
-        r.cap.style.fill = col;
+        r.cap.style.fill = colT;
         r.cap.setAttribute('opacity', fade);
         if (done && !counted[k]) {
           counted[k] = true; n++; if (pl.ok) ok++;
           accT.textContent = (ok / n * 100).toFixed(1) + '%';
         }
       });
-      box.setAttribute('fill', glow ? 'rgba(198, 97, 63, .18)' : 'rgba(198, 97, 63, .05)');
+      box.setAttribute('fill', glow ? 'rgba(220, 196, 240, .45)' : 'rgba(220, 196, 240, .2)');
     };
     newLoop();
     if (REDUCED) { render(7.6); return; }
@@ -510,7 +511,7 @@
     KEYS.forEach((k, di) => {
       const d = DOM[k];
       const card = h('div', 'mcard', null, grid);
-      h('div', 'mcard__t', `<span>${d.name} · ${d.bench}</span><b style="color:${d.color}">${avgOf(k, 0).toFixed(1)} → ${avgOf(k, 2).toFixed(1)}</b>`, card);
+      h('div', 'mcard__t', `<span>${d.name} · ${d.bench}</span><b style="color:${d.scolor}">${avgOf(k, 0).toFixed(1)} → ${avgOf(k, 2).toFixed(1)}</b>`, card);
       const s = svg('svg', { viewBox: `0 0 ${W} ${H}` }, card);
       [0, 25, 50, 75, 100].forEach(v => {
         svg('line', { x1: 32, x2: W - 14, y1: y(v), y2: y(v), class: 'mgrid' }, s);
@@ -528,7 +529,7 @@
       X.forEach((x, b) => {
         const v = avgOf(k, b);
         const c = svg('circle', { cx: x, cy: y(v), r: 5, class: 'mdot' }, s); c.style.fill = d.color;
-        const t = svg('text', { x, y: y(v) - 11, 'text-anchor': 'middle', class: 'mval' }, s); t.style.fill = d.color; t.textContent = v.toFixed(1);
+        const t = svg('text', { x, y: y(v) - 11, 'text-anchor': 'middle', class: 'mval' }, s); t.style.fill = d.scolor; t.textContent = v.toFixed(1);
         marks.push(c, t);
       });
       const all = [...lines[di], av];
@@ -582,7 +583,7 @@
         const R = 14 + 42 * Math.sqrt(tok / 90);
         const cell = h('div', 'reel-c', null, g);
         const s = svg('svg', { viewBox: '-60 -60 120 120', role: 'img', 'aria-label': `${DOM[k].name} at ${BND[b]}: ${tok}K tokens` }, cell);
-        svg('circle', { r: 57, fill: 'none', stroke: 'rgba(20, 20, 19, .1)', 'stroke-dasharray': '2 4' }, s);
+        svg('circle', { r: 57, fill: 'none', stroke: 'rgba(22, 21, 26, .1)', 'stroke-dasharray': '2 4' }, s);
         const pack = svg('circle', { r: 14, class: 'pack', 'stroke-width': 1.2 }, s);
         pack.style.fill = `color-mix(in srgb, ${DOM[k].color} 22%, transparent)`;
         pack.style.stroke = DOM[k].color;
@@ -630,7 +631,7 @@
   function failures() {
     const bar = $('#audit'), key = $('#auditKey');
     if (bar) {
-      const S = [['Preserved', 69.1, 'var(--d-c)'], ['Omitted', 25.3, 'var(--orange)'], ['Distorted', 5.6, 'var(--red)'], ['Uncertain', 0.1, 'var(--muted)']];
+      const S = [['Preserved', 69.1, 'var(--d-c)'], ['Omitted', 25.3, 'var(--orange)'], ['Distorted', 5.6, 'var(--bad)'], ['Uncertain', 0.1, 'var(--muted)']];
       const segs = S.map(([n, v, c]) => {
         const d = h('div', null, v > 20 ? `${v}% ${n.toLowerCase()}` : v >= 5 ? `${v}` : '', bar);
         d.style.background = c; d.title = `${n} ${v}%`;
@@ -665,8 +666,8 @@
         HEAT[k].forEach((v, ci) => {
           const a = Math.min(1, Math.abs(v) / 18);
           const c = h('div', 'heat__c', (v > 0 ? '+' : '') + v.toFixed(1), heat);
-          c.style.background = `rgba(${v >= 0 ? '198,97,63' : '120,140,93'},${(.08 + a * .85).toFixed(3)})`;
-          c.style.color = a > .45 ? '#fff' : 'var(--ink)';
+          c.style.background = `rgba(${v >= 0 ? '196,164,220' : '150,186,220'},${(.16 + a * .7).toFixed(3)})`;
+          c.style.color = 'var(--ink)';
           c.style.transitionDelay = `${(ri * 7 + ci) * 18}ms`;
           c.addEventListener('mouseenter', () => {
             cells.forEach(x => x.el.classList.toggle('dim', x.r !== ri && x.c !== ci));
