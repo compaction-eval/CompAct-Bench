@@ -10,7 +10,7 @@
     {
       id: '01', title: 'The Confirmed Review', short: 'Distortion',
       meta: [['Domain', 'Search · BrowseComp'], ['Boundary', '50%'], ['Outcome', 'Early failure'], ['Source', 'Fig. 1']],
-      score: 'FAIL', scoreSub: 'wrong answer',
+      score: 'Fail', scoreSub: 'wrong answer',
       task: '“… the second person mentioned exactly as stated in the acknowledgments …”',
       q: 'Which line in M<sub>b</sub> made the executor stop searching and answer?',
       pick: 'mb',
@@ -53,7 +53,7 @@
         { id: 'a2', t: 'Round 2 · “All criteria are confirmed.” → <span class="ok">Russell David Lyons ✓</span>' }
       ],
       answer: 't2', strings: [['e2', 't2', 'green'], ['t2', 'a1', 'green']],
-      verdict: { ok: true, stamp: 'PASS', head: 'Settled facts plus an honest open status.', body: 'Small state, nothing unresolved for a summarizer to misdescribe. Continuations closed in 2–5 actions where the source needed 11, because the context said exactly what was still missing.', tags: ['NO ERROR'] }
+      verdict: { ok: true, stamp: 'Pass', head: 'Settled facts plus an honest open status.', body: 'Small state, nothing unresolved for a summarizer to misdescribe. Continuations closed in 2–5 actions where the source needed 11, because the context said exactly what was still missing.', tags: ['No error'] }
     },
     {
       id: 'C', title: 'Twelve Readings of One Result', short: 'Status',
@@ -128,7 +128,7 @@
         { id: 'a2', t: 'Doubao · rounds 2–5 · grep &amp; re-read dmp_diff_in … one import edited → <span class="no">budget ends ✗</span>' }
       ],
       answer: 't3', strings: [['e2', 't3', 'green'], ['t3', 'a1', 'green'], ['t2', 'a2', 'gray']],
-      verdict: { ok: true, stamp: 'KEY', head: 'Information you drop has to be paid for twice.', body: 'Nothing had been materialized, so the located helper existed only in the context. Where M<sub>b</sub> named it, the executor edited in round 2; where it did not, the rediscovery cost four of eight actions and the fix never landed.', tags: ['CO'] }
+      verdict: { ok: true, stamp: 'Key', head: 'Information you drop has to be paid for twice.', body: 'Nothing had been materialized, so the located helper existed only in the context. Where M<sub>b</sub> named it, the executor edited in round 2; where it did not, the rediscovery cost four of eight actions and the fix never landed.', tags: ['CO'] }
     }
   ];
 
@@ -138,7 +138,7 @@
   let cur = 0;
 
   const folders = CASES.map((c, i) => {
-    const b = h('button', 'folder' + (solved.has(c.id) ? ' is-solved' : ''), `CASE ${c.id}<b>${c.title}</b><span class="closed">CLOSED</span>`, tabs);
+    const b = h('button', 'folder' + (solved.has(c.id) ? ' is-solved' : ''), `Case ${c.id}<b>${c.title}</b><span class="closed">Closed</span>`, tabs);
     b.setAttribute('role', 'tab');
     b.addEventListener('click', () => { sfx.click(); show(i); });
     return b;
@@ -182,22 +182,22 @@
     const c = CASES[i];
     folders.forEach((f, j) => f.classList.toggle('is-on', j === i));
     board.innerHTML = `
-      <div class="panel__hd"><span class="panel__id">CASE ${c.id}</span><span class="panel__t">Incident investigation report</span><span class="panel__st"><i class="led ${solved.has(c.id) ? 'on' : 'amber'}"></i>${solved.has(c.id) ? 'CLOSED' : 'OPEN'}</span></div>
+      <div class="panel__hd"><span class="panel__id">Case ${c.id}</span><span class="panel__t">Incident investigation report</span><span class="panel__st"><i class="led ${solved.has(c.id) ? 'on' : 'amber'}"></i>${solved.has(c.id) ? 'Closed' : 'Open'}</span></div>
       <div class="case__top">
         <div>
           <div class="case__meta">${c.meta.map(([k, v]) => `<span>${k} <b>${v}</b></span>`).join('')}</div>
           <h3 class="case__title">${c.title}</h3>
-          <p class="case__task">TASK — ${c.task}</p>
+          <p class="case__task"><b>Task.</b> ${c.task}</p>
         </div>
-        <div class="case__score">${c.scoreSub.toUpperCase()}<b>${c.score}</b></div>
+        <div class="case__score">${c.scoreSub}<b>${c.score}</b></div>
       </div>
-      <div class="case__q"><b>QUESTION</b><span>${c.q}</span></div>
+      <div class="case__q"><b>Question</b><span>${c.q}</span></div>
       <div class="board">
         <svg class="strings" aria-hidden="true"></svg>
         <div class="board__cols">
           <div class="board__col"><h5><i>H<sub>b</sub></i>Evidence · what happened</h5>${c.hb.map(n => noteHTML(n, '')).join('')}</div>
           <div class="board__col"><h5><i>M<sub>b</sub></i>Testimony · what was written down</h5>${c.mb.map(n => noteHTML(n, 'note--mb')).join('')}</div>
-          <div class="board__col"><h5><i>RUN</i>Action · what the executor did</h5>${c.act.map(n => noteHTML(n, 'note--act')).join('')}</div>
+          <div class="board__col"><h5><i>Run</i>Action · what the executor did</h5>${c.act.map(n => noteHTML(n, 'note--act')).join('')}</div>
         </div>
       </div>
       <div class="case__hint" aria-live="polite">Click a ${c.pick === 'hb' ? '<b>H<sub>b</sub> evidence</b>' : '<b>M<sub>b</sub> testimony</b>'} card to accuse it.</div>
@@ -212,14 +212,14 @@
       cands.forEach(n => { n.classList.remove('clickable'); n.disabled = true; });
       const culprit = wrap.querySelector(`[data-id="${c.answer}"]`);
       culprit.classList.add('culprit'); if (c.verdict.ok) culprit.classList.add('good');
-      h('span', 'note__flag' + (c.verdict.ok ? ' g' : ''), c.verdict.ok ? 'KEY' : 'CULPRIT', culprit);
+      h('span', 'note__flag' + (c.verdict.ok ? ' g' : ''), c.verdict.ok ? 'Key' : 'Culprit', culprit);
       drawStrings(layer, wrap, c.strings, animate);
       verdict.hidden = false;
       verdict.innerHTML = `<div class="stamp ${c.verdict.ok ? 'ok' : 'bad'}${animate ? ' slam' : ''}">${c.verdict.stamp}</div><div><h4>${c.verdict.head}</h4><p>${c.verdict.body}</p><div class="tags">${c.verdict.tags.map(t => `<span style="--pc:${c.verdict.ok ? 'var(--d-c)' : 'var(--red)'}">${t}</span>`).join('')}</div></div>`;
       hint.innerHTML = 'Case closed. Strings show how the evidence travelled.';
       if (animate) { c.verdict.ok ? sfx.ok() : sfx.stamp(); }
       if (!solved.has(c.id)) { solved.add(c.id); store.set('cb-cases', JSON.stringify([...solved])); folders[i].classList.add('is-solved'); }
-      const st = $('.panel__st', board); st.innerHTML = '<i class="led on"></i>CLOSED';
+      const st = $('.panel__st', board); st.innerHTML = '<i class="led on"></i>Closed';
       progress();
     };
     cands.forEach(n => {

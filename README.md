@@ -2,7 +2,7 @@
 
 Landing page for **CompAct-Bench: A Benchmark for Working-Context Compaction in Long-Horizon Agent Tasks**.
 
-The site is a static GitHub Pages build. The visual language is inspired by tape archives and instrument panels: a compacted context is a recording that has to survive a rewind and still drive the next action.
+The site is a static GitHub Pages build. The visual language is warm and editorial: ivory paper, serif headlines, soft rounded cards and a single clay accent, so the data and the interactive figures stay in front.
 
 ## Local preview
 

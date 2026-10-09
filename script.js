@@ -177,16 +177,7 @@
       const sys = 'You are an academic assistant. The conversation will focus on the paper provided. Answer professionally in English, use markdown format for structured responses, and avoid first person.';
       kimi.href = `https://kimi.com/_prefill_chat?prefill_prompt=${encodeURIComponent(prompt)}&system_prompt=${encodeURIComponent(sys)}&send_immediately=true`;
     }
-    const tk = $('#ticker'); if (tk) tk.innerHTML += tk.innerHTML;
-
-    const mark = $('.t-mark');
-    if (mark && !REDUCED) {
-      const g = () => { mark.classList.remove('glitch'); void mark.offsetWidth; mark.classList.add('glitch'); };
-      setTimeout(g, 600);
-      setInterval(() => { if (window.scrollY < window.innerHeight) g(); }, 5200);
-    }
-
-    /* nav: paper mode after hero, progress, MET, hide on scroll-down, active link */
+    /* nav: border after hero, progress, hide on scroll-down, active link */
     const nav = $('#nav'), prog = $('#progress'), met = $('#met'), hero = $('#top');
     let lastY = window.scrollY, ticking = false;
     const update = () => {
@@ -195,7 +186,7 @@
       const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       const p = clamp(y / max, 0, 1);
       prog.style.transform = `scaleX(${p})`;
-      met.textContent = String(Math.round(p * 999)).padStart(3, '0');
+      if (met) met.textContent = String(Math.round(p * 999)).padStart(3, '0');
       nav.classList.toggle('is-paper', y > hero.offsetHeight - 70);
       if (y > 600 && y > lastY + 4) nav.classList.add('is-hidden');
       else if (y < lastY - 4 || y < 600) nav.classList.remove('is-hidden');
@@ -213,29 +204,6 @@
     }), { rootMargin: '-45% 0px -50% 0px' });
     map.forEach((a, id) => { const s = document.getElementById(id); if (s) io.observe(s); });
 
-    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && !REDUCED) {
-      const c = $('#cursor');
-      let x = -100, y = -100, cx = -100, cy = -100;
-      window.addEventListener('mousemove', e => {
-        x = e.clientX; y = e.clientY;
-        c.classList.toggle('is-hover', !!e.target.closest('a, button, .chip, .heat__c, .lb__row, .note.clickable, .frag, .cart, summary'));
-      });
-      const loop = () => {
-        cx += (x - cx) * .28; cy += (y - cy) * .28;
-        c.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
-        requestAnimationFrame(loop);
-      };
-      loop();
-      $$('.hero .btn').forEach(b => {
-        b.addEventListener('mousemove', e => {
-          const r = b.getBoundingClientRect();
-          b.style.setProperty('--mx', ((e.clientX - r.left - r.width / 2) * .18).toFixed(1) + 'px');
-          b.style.setProperty('--my', ((e.clientY - r.top - r.height / 2) * .3).toFixed(1) + 'px');
-        });
-        b.addEventListener('mouseleave', () => { b.style.setProperty('--mx', '0px'); b.style.setProperty('--my', '0px'); });
-      });
-    }
-
     const cb = $('#copyBtn');
     if (cb) cb.addEventListener('click', async () => {
       const ok = await copyText($('#bib').textContent);
@@ -249,7 +217,7 @@
      ------------------------------------------------------------------ */
   function overview() {
     const host = $('#overview-fig'); if (!host) return;
-    const C = { amber: '#ffb000', lit: 'rgba(255,176,0,.72)', dim: 'rgba(255,176,0,.12)', phos: '#8dff5a', red: '#ff4d2e', rep: 'rgba(255,145,71,.5)', s: '#ff9147', c: '#52e6aa', w: '#86b4ff' };
+    const C = { amber: '#C6613F', lit: 'rgba(198, 97, 63, .72)', dim: 'rgba(198, 97, 63, .12)', phos: '#5E7D4A', red: '#BF4D43', rep: 'rgba(212, 162, 127, .5)', s: '#D4A27F', c: '#788C5D', w: '#6A9BCC' };
     const W = 1200, H = 470, N = 24, X0 = 262, STEP = 20, CW = 16;
     const IDX = [6, 12, 18], ROWY = [182, 272, 362], CX0 = 902, CX1 = 1118;
     const BOX = { x: 762, y: 166, w: 70, h: 262 };
@@ -263,14 +231,14 @@
       const sp = svg('tspan', { 'baseline-shift': 'sub', 'font-size': '.72em' }, e); sp.textContent = sub;
       return e;
     };
-    T(30, 36, '01 · SOURCE TASKS', 'ov-hd');
-    T(X0, 36, '02 · SUCCESSFUL TRAJECTORY τ · KEPT IF pass³', 'ov-hd');
-    T(860, 36, '04 · POST-COMPACTION EXECUTION', 'ov-hd');
+    T(30, 36, '1 · Source tasks', 'ov-hd');
+    T(X0, 36, '2 · Successful trajectory τ, kept if pass³', 'ov-hd');
+    T(860, 36, '4 · Post-compaction execution', 'ov-hd');
     const chips = KEYS.map((k, i) => {
       const y = 58 + i * 92;
-      const r = svg('rect', { x: 30, y, width: 190, height: 72, rx: 6, fill: C[k], 'fill-opacity': .05, stroke: C[k], 'stroke-width': 1 }, s);
-      const t1 = T(46, y + 30, DOM[k].name.toUpperCase(), 'ov-txt'); t1.style.fill = C[k];
-      T(46, y + 52, `${String(DOM[k].tasks).padStart(3, '0')} TASKS · ${DOM[k].bench}`, 'ov-small');
+      const r = svg('rect', { x: 30, y, width: 190, height: 72, rx: 12, fill: C[k], 'fill-opacity': .06, stroke: C[k], 'stroke-width': 1 }, s);
+      const t1 = T(46, y + 30, DOM[k].name, 'ov-txt'); t1.style.fill = C[k];
+      T(46, y + 52, `${DOM[k].tasks} tasks · ${DOM[k].bench}`, 'ov-small');
       const dot = svg('circle', { cx: 204, cy: y + 16, r: 4, fill: C[k], opacity: 0 }, s);
       return { r, dot, y };
     });
@@ -288,8 +256,8 @@
       svg('line', { x1: bx, x2: bx, y1: 58, y2: ROWY[k] + 38, stroke: C.red, 'stroke-width': 1.2, 'stroke-dasharray': '4 4' }, s);
       const t = T(bx + 4, 64, 'b=' + BND[k], 'ov-small'); t.style.fill = C.red;
     });
-    const box = svg('rect', { x: BOX.x, y: BOX.y, width: BOX.w, height: BOX.h, rx: 8, fill: 'rgba(255,176,0,.05)', stroke: C.amber, 'stroke-width': 1.2, 'stroke-dasharray': '5 4' }, s);
-    TS(BOX.x + BOX.w / 2, BOX.y - 12, '03 · C', 'φ', 'ov-hd', { 'text-anchor': 'middle' });
+    const box = svg('rect', { x: BOX.x, y: BOX.y, width: BOX.w, height: BOX.h, rx: 14, fill: 'rgba(198, 97, 63, .05)', stroke: C.amber, 'stroke-width': 1.2, 'stroke-dasharray': '5 4' }, s);
+    TS(BOX.x + BOX.w / 2, BOX.y - 12, '3 · C', 'φ', 'ov-hd', { 'text-anchor': 'middle' });
     T(BOX.x + BOX.w / 2, BOX.y + BOX.h / 2 + 4, 'LLM', 'ov-big', { 'text-anchor': 'middle' });
     T(BOX.x + BOX.w / 2, BOX.y + BOX.h / 2 + 26, 'r = 10%', 'ov-small', { 'text-anchor': 'middle' });
     const rows = IDX.map((ix, k) => {
@@ -297,10 +265,10 @@
       const full = ix * STEP - 4;
       TS(X0, y - 9, 'H', 'b', 'ov-small').appendChild(document.createTextNode(` · b = ${BND[k]} · ${ix} of ${N} steps`));
       const hb = svg('rect', { x: X0, y, width: 0, height: 30, fill: C.amber, rx: 2 }, s);
-      const hbT = TS(X0 + 8, y + 20, 'H', 'b', 'ov-small', { opacity: 0 }); hbT.style.fill = '#1a1205';
+      const hbT = TS(X0 + 8, y + 20, 'H', 'b', 'ov-small', { opacity: 0 }); hbT.style.fill = '#FAF9F5';
       const arr = svg('line', { x1: BOX.x + BOX.w + 4, x2: 855, y1: y + 15, y2: y + 15, stroke: C.amber, 'stroke-width': 1.2, 'marker-end': 'url(#ovah)', opacity: .25 }, s);
       const mb = svg('rect', { x: 860, y, width: 0, height: 30, fill: C.phos, rx: 2 }, s);
-      const mbT = TS(866, y + 20, 'M', 'b', 'ov-small', { opacity: 0 }); mbT.style.fill = '#0c1a06';
+      const mbT = TS(866, y + 20, 'M', 'b', 'ov-small', { opacity: 0 }); mbT.style.fill = '#FAF9F5';
       const rem = N - ix, cw = (CX1 - CX0) / rem, cc = [];
       for (let i = 0; i < rem; i++) cc.push(svg('rect', { x: CX0 + i * cw, y: y + 4, width: Math.max(2, cw - 3), height: 22, fill: C.dim }, s));
       const lamp = svg('circle', { cx: 1152, cy: y + 15, r: 13, fill: 'none', stroke: C.dim, 'stroke-width': 2 }, s);
@@ -308,9 +276,9 @@
       const cap = T(1152, y + 46, '', 'ov-small', { 'text-anchor': 'middle' });
       return { ix, y, full, rem, hb, hbT, mb, mbT, cc, lamp, lampT, cap, arr };
     });
-    T(30, 372, 'RUNNING Acc', 'ov-hd');
+    T(30, 372, 'Running accuracy', 'ov-hd');
     const accT = T(30, 412, '--.-%', 'ov-big'); accT.style.fill = C.phos;
-    const loopT = T(30, 434, 'LOOP 000', 'ov-small');
+    const loopT = T(30, 434, 'Loop 0', 'ov-small');
     T(30, 456, 'Acc = successful continuations / all instances', 'ov-small');
 
     const LEN = 9.2;
@@ -324,7 +292,7 @@
         const early = Math.random() < .35;
         return { ok: false, early, k: early ? Math.max(1, Math.round(rem * rand(.2, .5))) : rem };
       });
-      loopT.textContent = `LOOP ${String(loop).padStart(3, '0')} · ${DOM[dom].bench.toUpperCase()}`;
+      loopT.textContent = `Loop ${loop} · ${DOM[dom].bench}`;
       chips.forEach((c, i) => {
         const on = KEYS[i] === dom;
         c.r.setAttribute('fill-opacity', on ? .2 : .04);
@@ -370,11 +338,11 @@
         const done = t >= ce + .1;
         const col = pl.ok ? C.phos : C.red;
         r.lamp.setAttribute('stroke', done ? col : C.dim);
-        r.lamp.setAttribute('fill', done ? (pl.ok ? 'rgba(141,255,90,.18)' : 'rgba(255,77,46,.18)') : 'none');
+        r.lamp.setAttribute('fill', done ? (pl.ok ? 'rgba(94, 125, 74, .18)' : 'rgba(191, 77, 67, .18)') : 'none');
         r.lamp.setAttribute('opacity', fade);
         r.lampT.textContent = done ? (pl.ok ? '✓' : '✗') : '';
         r.lampT.style.fill = col;
-        r.cap.textContent = done ? (pl.ok ? 'COMPLETE' : pl.early ? 'EARLY STOP' : 'BUDGET OUT') : '';
+        r.cap.textContent = done ? (pl.ok ? 'Complete' : pl.early ? 'Early stop' : 'Budget out') : '';
         r.cap.style.fill = col;
         r.cap.setAttribute('opacity', fade);
         if (done && !counted[k]) {
@@ -382,7 +350,7 @@
           accT.textContent = (ok / n * 100).toFixed(1) + '%';
         }
       });
-      box.setAttribute('fill', glow ? 'rgba(255,176,0,.18)' : 'rgba(255,176,0,.05)');
+      box.setAttribute('fill', glow ? 'rgba(198, 97, 63, .18)' : 'rgba(198, 97, 63, .05)');
     };
     newLoop();
     if (REDUCED) { render(7.6); return; }
@@ -409,15 +377,15 @@
       el.innerHTML = `
         <div class="cart__shell">
           <div class="cart__label">
-            <div class="cart__k"><span>${d.name.toUpperCase()}</span><span>SIDE ${'ABC'[i]}</span></div>
-            <div class="cart__n"><b>${d.tasks}</b><span>TASKS</span></div>
+            <div class="cart__k"><span>${d.name}</span><span>Domain ${i + 1}</span></div>
+            <div class="cart__n"><b>${d.tasks}</b><span>tasks</span></div>
             <div class="cart__name">${d.bench}</div>
             <div class="cart__win"><i></i><i></i></div>
             <div class="cart__stripe"></div>
           </div>
           <div class="cart__foot"><i></i><i></i><i></i><i></i></div>
         </div>
-        <div class="cart__meta"><span>AVG <b>${d.avg}K</b> tok</span><span><b>${d.rounds}</b> rounds</span><span>${d.state}</span></div>`;
+        <div class="cart__meta"><span>avg <b>${d.avg}K</b> tokens</span><span><b>${d.rounds}</b> rounds</span><span>${d.state}</span></div>`;
     });
   }
 
@@ -520,7 +488,7 @@
       if (st.open >= 0) fillDetail(st.open);
       body.style.height = y + 'px';
       const keyName = COLS.find(c => c[0] === st.key)[1];
-      status.textContent = (b === 3 ? 'ALL BOUNDARIES' : `b = ${BND[b]} · OVERALL = MICRO-AVG`) + ` · SORT ${keyName.toUpperCase()}`;
+      status.textContent = (b === 3 ? 'All boundaries' : `b = ${BND[b]} · overall is micro-avg`) + ` · sorted by ${keyName.toLowerCase()}`;
     };
     $$('#lbBoundary button').forEach(btn => btn.addEventListener('click', () => {
       st.b = +btn.dataset.b;
@@ -607,12 +575,12 @@
   }
 
   /* ------------------------------------------------------------------
-     §4 · reels, persistence, failure analysis
+     §4 · token circles, persistence, failure analysis
      ------------------------------------------------------------------ */
   function reels() {
     const g = $('#reels'); if (!g) return;
     h('div', 'reels__hd', '', g);
-    KEYS.forEach(k => { h('div', 'reels__hd', DOM[k].name.toUpperCase(), g).style.color = DOM[k].scolor; });
+    KEYS.forEach(k => { h('div', 'reels__hd', DOM[k].name, g).style.color = DOM[k].scolor; });
     const packs = [];
     [0, 1, 2].forEach(b => {
       h('div', 'reels__rw', BND[b], g);
@@ -621,13 +589,11 @@
         const R = 14 + 42 * Math.sqrt(tok / 90);
         const cell = h('div', 'reel-c', null, g);
         const s = svg('svg', { viewBox: '-60 -60 120 120', role: 'img', 'aria-label': `${DOM[k].name} at ${BND[b]}: ${tok}K tokens` }, cell);
-        svg('circle', { r: 57, fill: 'none', stroke: 'rgba(255,176,0,.16)', 'stroke-dasharray': '2 4' }, s);
-        const pack = svg('circle', { r: 14, class: 'pack', fill: '#3b2617', stroke: 'rgba(255,176,0,.4)', 'stroke-width': .6 }, s);
-        const spin = svg('g', { class: 'spin' }, s);
-        svg('circle', { r: 13, fill: '#efe7d6' }, spin);
-        svg('circle', { r: 5, fill: '#100f0c' }, spin);
-        svg('path', { d: 'M0 -12V-7M0 12V7M-12 0H-7M12 0H7', stroke: '#100f0c', 'stroke-width': 3 }, spin);
-        spin.style.setProperty('--spd', (R / 20 * 2.2).toFixed(2) + 's');
+        svg('circle', { r: 57, fill: 'none', stroke: 'rgba(20, 20, 19, .1)', 'stroke-dasharray': '2 4' }, s);
+        const pack = svg('circle', { r: 14, class: 'pack', 'stroke-width': 1.2 }, s);
+        pack.style.fill = `color-mix(in srgb, ${DOM[k].color} 22%, transparent)`;
+        pack.style.stroke = DOM[k].color;
+        svg('circle', { r: 3.5 }, s).style.fill = DOM[k].color;
         h('b', null, tok.toFixed(1) + 'K', cell).style.color = DOM[k].scolor;
         packs.push([pack, R]);
       });
@@ -706,7 +672,7 @@
         HEAT[k].forEach((v, ci) => {
           const a = Math.min(1, Math.abs(v) / 18);
           const c = h('div', 'heat__c', (v > 0 ? '+' : '') + v.toFixed(1), heat);
-          c.style.background = `rgba(${v >= 0 ? '226,56,27' : '16,145,106'},${(.08 + a * .85).toFixed(3)})`;
+          c.style.background = `rgba(${v >= 0 ? '198,97,63' : '120,140,93'},${(.08 + a * .85).toFixed(3)})`;
           c.style.color = a > .45 ? '#fff' : 'var(--ink)';
           c.style.transitionDelay = `${(ri * 7 + ci) * 18}ms`;
           c.addEventListener('mouseenter', () => {

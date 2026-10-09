@@ -9,13 +9,13 @@
   const { $, $$, h, sleep, sfx, store, animateNum, MODELS, DOM, REDUCED, toast, copyText } = CB;
 
   const ROLE = {
-    critical: ['CRITICAL EVIDENCE', 'var(--red)'],
-    constraint: ['TASK CONSTRAINT', 'var(--d-w)'],
-    rejected: ['DEAD END · RESOLVED', 'var(--orange)'],
-    hunch: ['UNVERIFIED HUNCH', '#9b59d0'],
-    thread: ['OPEN THREADS', 'var(--d-c)'],
-    persisted: ['STATE ON DISK · POINTER', 'var(--d-c)'],
-    noise: ['NOISE', 'var(--muted)']
+    critical: ['Critical evidence', 'var(--red)'],
+    constraint: ['Task constraint', 'var(--d-w)'],
+    rejected: ['Dead end · resolved', 'var(--orange)'],
+    hunch: ['Unverified hunch', '#C46686'],
+    thread: ['Open threads', 'var(--d-c)'],
+    persisted: ['State on disk · pointer', 'var(--d-c)'],
+    noise: ['Noise', 'var(--muted)']
   };
   const ERRLAB = { critical: 'CO', rejected: 'LR', thread: 'PSL', persisted: 'PSL', constraint: 'CO' };
 
@@ -23,16 +23,16 @@
     {
       id: 'S-25', dom: 's', b: 0, title: 'The “Line” paper', budget: 6, base: 3, cap: 1000,
       task: 'Find Person A: elected AMS Fellow between 2005 and 2020, Ph.D. in Mathematics in 1983, co-author (1990–2005) of a three-author paper with a Rollo Davidson Prize winner and with Person C, whose 1990s paper title ends with the word “Line”. Give Person A’s full name.',
-      baseActs: ['Infer the trio from the prize list: Lyons · Pemantle · Peres (1995)', 'Verify: Lyons Ph.D. 1983, AMS Fellow 2013 · Pemantle “…contains a line” (1997)', 'SUBMIT · Russell David Lyons'],
+      baseActs: ['Infer the trio from the prize list: Lyons · Pemantle · Peres (1995)', 'Verify: Lyons Ph.D. 1983, AMS Fellow 2013 · Pemantle “…contains a line” (1997)', 'Submit · Russell David Lyons'],
       win: 'Russell David Lyons ✓',
       frags: [
         { id: 's1', r: 'R02', tag: 'Visit · Wikipedia', role: 'critical', pen: ['Search “Rollo Davidson Prize winners” again', 'Re-open the Wikipedia list', 'Re-read the 1991–2004 winners', 'Re-derive candidate co-authors'],
           vars: [{ k: 'FULL', t: 'Rollo Davidson Prize 1991–2004: Sznitman ’91 · Burdzy ’92 · Ben Arous & Pemantle ’93 · Mountford & Saloff-Coste ’94 · Biane & Peres ’95 · … · Benjamini & Holroyd ’04', c: 420 }, { k: 'SHORT', t: 'Prize winners list obtained.', c: 110, loses: true }] },
-        { id: 's2', r: 'TASK', tag: 'Task detail', role: 'constraint', fail: 'SUBMIT “Russell Lyons” → judge: incomplete name ✗',
+        { id: 's2', r: 'TASK', tag: 'Task detail', role: 'constraint', fail: 'Submit “Russell Lyons” → judge: incomplete name ✗',
           vars: [{ k: 'FULL', t: 'Answer format: Person A’s full name, middle name included.', c: 120 }] },
         { id: 's3', r: 'R01', tag: 'Search', role: 'rejected', pen: ['Retry “paper title ends with Line 1990s probability”', '→ APA style guides again. Dead end.'],
           vars: [{ k: 'FULL', t: 'Query “paper title ends with Line 1990s probability” → APA style guides, IEEE manual. Dead end.', c: 230 }, { k: 'SHORT', t: 'One search failed.', c: 80, loses: true }] },
-        { id: 's4', r: 'R03', tag: 'Executor thought', role: 'hunch', chk: ['Check Burdzy: no 1983 Ph.D. / AMS match → drop'], distort: ['Trust M_b “Person A = Burdzy” → SUBMIT Krzysztof Burdzy ✗'],
+        { id: 's4', r: 'R03', tag: 'Executor thought', role: 'hunch', chk: ['Check Burdzy: no 1983 Ph.D. / AMS match → drop'], distort: ['Trust M_b “Person A = Burdzy” → submit Krzysztof Burdzy ✗'],
           vars: [{ k: 'TENTATIVE', t: 'Hunch, unverified: Burdzy might be Person A (Ph.D. year unknown).', c: 170 }, { k: 'CONFIRMED', t: 'Person A = Burdzy.', c: 60, distort: true }] },
         { id: 's5', r: 'R03', tag: 'Status', role: 'thread', pen: ['Re-plan: which clues are still unmatched?'],
           vars: [{ k: 'FULL', t: 'Still open: (1) find Person C’s “…Line” paper; (2) match AMS Fellow + 1983 Ph.D.', c: 200 }, { k: 'SHORT', t: 'Keep searching.', c: 50, loses: true }] },
@@ -45,7 +45,7 @@
     {
       id: 'C-75', dom: 'c', b: 2, title: 'The missing factor', budget: 8, base: 4, cap: 1100,
       task: 'sympy#18895: factor(z, extension=[I]) drops the factor y − 1 for z = expand((x − 1)(y − 1)). Fix it so the hidden tests pass. The repository is untouched at the boundary.',
-      baseActs: ['Open dmp_sqf_part (sqfreetools.py:229)', 'Edit: gcd over dmp_diff_in(f, 1, j, u, K) for every j', 'Add dmp_diff_in to the imports', 'Run repro → (x − 1)(y − 1) · SUBMIT'],
+      baseActs: ['Open dmp_sqf_part (sqfreetools.py:229)', 'Edit: gcd over dmp_diff_in(f, 1, j, u, K) for every j', 'Add dmp_diff_in to the imports', 'Run repro → (x − 1)(y − 1) · submit'],
       win: 'hidden tests pass ✓',
       frags: [
         { id: 'c1', r: 'R13', tag: 'Probe', role: 'critical', pen: ['grep _symbolic_factor / dmp_factor_list again', 'Re-read dmp_sqf_part', 'Re-run the ℚ⟨i⟩ probe'],
@@ -56,7 +56,7 @@
           vars: [{ k: 'FULL', t: 'Repro saved on disk: /tmp/repro_18895.py.', c: 120 }] },
         { id: 'c4', r: 'R07', tag: 'Dead end', role: 'rejected', pen: ['Try patching dmp_ext_factor again', '→ no effect; revert'],
           vars: [{ k: 'FULL', t: 'Patching dmp_ext_factor (factortools.py:1138) does not help. The factor is lost earlier, in sqf_part.', c: 260 }, { k: 'SHORT', t: 'Looked at factortools.', c: 70, loses: true }] },
-        { id: 'c5', r: 'R16', tag: 'Executor thought', role: 'hunch', chk: ['Test j = 1 only on a 3-variable case → fails; loop over all j'], distort: ['Apply the j = 1 patch from M_b, skip verification', 'SUBMIT → hidden 3-variable test fails ✗'],
+        { id: 'c5', r: 'R16', tag: 'Executor thought', role: 'hunch', chk: ['Test j = 1 only on a 3-variable case → fails; loop over all j'], distort: ['Apply the j = 1 patch from M_b, skip verification', 'Submit → hidden 3-variable test fails ✗'],
           vars: [{ k: 'TENTATIVE', t: 'Hunch, unverified: dmp_diff_in for variable j = 1 only might suffice.', c: 200 }, { k: 'CONFIRMED', t: 'Fix: use dmp_diff_in for variable 1.', c: 70, distort: true }] },
         { id: 'c6', r: 'R20', tag: 'Tests', role: 'thread', pen: ['Locate the relevant test files'],
           vars: [{ k: 'FULL', t: 'Relevant tests: test_sqfreetools.py, test_polytools.py::test_issue_5786 (XFAIL).', c: 200 }, { k: 'SHORT', t: 'Run the tests.', c: 50, loses: true }] },
@@ -68,12 +68,12 @@
     {
       id: 'W-50', dom: 'w', b: 1, title: 'Quarter close', budget: 7, base: 3, cap: 900,
       task: 'Compile the Q3 vendor invoices in /finance/q3 into a report, exclude any vendor whose contract has ended, and send it to the CFO in the format she asked for.',
-      baseActs: ['Export /reports/q3_vendors.xlsx with export_pdf', 'Email the PDF to dana.wu@corp.example', 'Confirm the sent item · SUBMIT'],
+      baseActs: ['Export /reports/q3_vendors.xlsx with export_pdf', 'Email the PDF to dana.wu@corp.example', 'Confirm the sent item · submit'],
       win: 'evaluator: report accepted ✓',
       frags: [
         { id: 'w1', r: 'R31', tag: 'File on disk', role: 'persisted', pen: ['ls /reports … is there a draft?', 'Re-check the invoice totals'],
           vars: [{ k: 'FULL', t: 'Report built: /reports/q3_vendors.xlsx · 41 invoices · totals checked.', c: 220 }, { k: 'SHORT', t: 'Report started.', c: 70, loses: true }] },
-        { id: 'w2', r: 'R12', tag: 'Email · Legal', role: 'constraint', fail: 'SUBMIT → report still lists Acme Logistics ✗', pen: ['Search mail for “contract ended”', 'Read the Legal thread · Acme Logistics'],
+        { id: 'w2', r: 'R12', tag: 'Email · Legal', role: 'constraint', fail: 'Submit → report still lists Acme Logistics ✗', pen: ['Search mail for “contract ended”', 'Read the Legal thread · Acme Logistics'],
           vars: [{ k: 'FULL', t: 'Exclude Acme Logistics: contract ended 2026-07-12.', c: 180 }, { k: 'SHORT', t: 'Exclude one vendor (see email).', c: 60, loses: true }] },
         { id: 'w3', r: 'R05', tag: 'Email · CFO', role: 'critical', pen: ['Look up the CFO in the directory', 'Re-read her request: PDF, not XLSX'],
           vars: [{ k: 'FULL', t: 'CFO = dana.wu@corp.example · wants a PDF, not XLSX.', c: 160 }, { k: 'SHORT', t: 'Send it to the CFO.', c: 50, loses: true }] },
@@ -120,7 +120,7 @@
     m.baseActs.forEach(t => acts.push({ k: 'ok', t }));
     if (acts.length > m.budget) {
       const seq = acts.slice(0, m.budget);
-      seq[seq.length - 1] = { k: 'bad', t: seq[seq.length - 1].t + ' → BUDGET EXHAUSTED' };
+      seq[seq.length - 1] = { k: 'bad', t: seq[seq.length - 1].t + ' → budget exhausted' };
       outcome = 'budget'; used = m.budget;
       return { outcome, acts: seq, used, errs: [...new Set(errs)], notes };
     }
@@ -192,7 +192,7 @@
     const m = MISSIONS[i], d = DOM[m.dom], r = results[m.id];
     b.classList.toggle('is-on', i === cur);
     b.innerHTML = `<small>Mission ${m.id} · ${d.name} · b = ${CB.BND[m.b]}</small><b>${m.title}</b><span>Budget ${m.budget} actions · capacity ${m.cap.toLocaleString()} chars · par ${m.par}</span>` +
-      (r ? `<em class="${r.ok ? 'pass' : 'fail'}">${r.rank}</em>` : '<em>NEW</em>');
+      (r ? `<em class="${r.ok ? 'pass' : 'fail'}">${r.rank}</em>` : '<em>New</em>');
   });
 
   function load(i) {
@@ -201,14 +201,14 @@
     paintTabs();
     const order = [...m.frags].sort((a, b) => (a.r === 'TASK' ? -1 : b.r === 'TASK' ? 1 : a.r.localeCompare(b.r)));
     game.innerHTML = `
-      <div class="panel__hd"><span class="panel__id">MISSION ${m.id}</span><span class="panel__t">${d.bench} · compactor seat</span><span class="panel__st"><i class="led amber"></i><span id="gStatus">AWAITING M_b</span></span></div>
+      <div class="panel__hd"><span class="panel__id">Mission ${m.id}</span><span class="panel__t">${d.bench} · compactor seat</span><span class="panel__st"><i class="led amber"></i><span id="gStatus">Awaiting M_b</span></span></div>
       <div class="brief">
         <div class="brief__task"><small>Task t · executor ${d.exec} · boundary b = ${CB.BND[m.b]}</small><p>${m.task}</p></div>
         <div class="brief__specs">
           <div class="spec"><span>H_b</span><b>${(m.total / 1000).toFixed(1)}k</b></div>
-          <div class="spec"><span>CAPACITY</span><b>${(m.cap / 1000).toFixed(1)}k</b></div>
-          <div class="spec"><span>BUDGET T−b</span><b>${m.budget}</b></div>
-          <div class="spec"><span>PAR</span><b>${m.par}</b></div>
+          <div class="spec"><span>Capacity</span><b>${(m.cap / 1000).toFixed(1)}k</b></div>
+          <div class="spec"><span>Budget T−b</span><b>${m.budget}</b></div>
+          <div class="spec"><span>Par</span><b>${m.par}</b></div>
         </div>
       </div>
       <div class="workbench">
@@ -224,21 +224,21 @@
         <div class="capsule">
           <div class="wb__hd"><b>M<sub>b</sub> · your compacted context</b><span>r ≤ 10%</span></div>
           <div class="screen gauge">
-            <div class="gauge__row"><span>CHARS USED</span><b id="gUsed">0</b><span>/ ${m.cap.toLocaleString()}</span></div>
+            <div class="gauge__row"><span>Chars used</span><b id="gUsed">0</b><span>/ ${m.cap.toLocaleString()}</span></div>
             <div class="gauge__bar" id="gBar">${'<i></i>'.repeat(40)}</div>
-            <div class="gauge__cap"><span>0</span><span id="gRatio">r = 0.0%</span><span>10% CAP</span></div>
+            <div class="gauge__cap"><span>0</span><span id="gRatio">r = 0.0%</span><span>10% cap</span></div>
           </div>
           <div class="picked" id="gPicked"></div>
           <div class="cap-actions">
             <button class="btn btn--sm" id="gReset" type="button">Clear</button>
-            <button class="btn btn--sm btn-commit" id="gCommit" type="button" disabled>Commit · resume ▶</button>
+            <button class="btn btn--sm btn-commit" id="gCommit" type="button" disabled>Commit and resume →</button>
           </div>
         </div>
       </div>
       <div class="screen runner" id="gRunner" hidden>
-        <div class="runner__hd"><span>EXECUTOR · ${d.exec.toUpperCase()} · RESUMING FROM M_b</span><span>ACTIONS <b id="gAct">0</b> / ${m.budget}</span></div>
+        <div class="runner__hd"><span>Executor · ${d.exec} · resuming from M_b</span><span>Actions <b id="gAct">0</b> / ${m.budget}</span></div>
         <div class="track" id="gTrack">${Array.from({ length: m.budget }, (_, k) => `<i data-n="${k + 1}"></i>`).join('')}</div>
-        <div class="track__key"><span><i style="background:var(--phos)"></i>progress</span><span><i style="background:repeating-linear-gradient(45deg,var(--amber) 0 3px,rgba(255,176,0,.25) 3px 6px)"></i>repeated / recovery</span><span><i style="background:var(--ds-w)"></i>verification</span><span><i style="background:var(--bad)"></i>failure</span></div>
+        <div class="track__key"><span><i style="background:var(--phos)"></i>progress</span><span><i style="background:repeating-linear-gradient(45deg,var(--amber) 0 3px,rgba(198, 97, 63, .25) 3px 6px)"></i>repeated / recovery</span><span><i style="background:var(--ds-w)"></i>verification</span><span><i style="background:var(--bad)"></i>failure</span></div>
         <div class="rlog" id="gLog"></div>
       </div>
       <div class="debrief" id="gDebrief" hidden></div>`;
@@ -272,7 +272,7 @@
       box.innerHTML = chosen.map(f => {
         const v = f.vars.find(x => x.k === picks[f.id]);
         return `<div class="pk" data-id="${f.id}"><div class="pk__top"><span class="pk__txt">${v.t}</span><button class="pk__x" type="button" aria-label="Remove">×</button></div>` +
-          (f.vars.length > 1 ? `<div class="pk__vars">${f.vars.map(x => `<button type="button" data-k="${x.k}" class="${x.k === v.k ? 'is-on' : ''}">${x.k} · ${x.c}</button>`).join('')}</div>` : '') + '</div>';
+          (f.vars.length > 1 ? `<div class="pk__vars">${f.vars.map(x => `<button type="button" data-k="${x.k}" class="${x.k === v.k ? 'is-on' : ''}">${x.k.charAt(0) + x.k.slice(1).toLowerCase()} · ${x.c}</button>`).join('')}</div>` : '') + '</div>';
       }).join('');
       $$('.pk', box).forEach(pk => {
         const id = pk.dataset.id;
@@ -281,7 +281,7 @@
       });
     }
     $('#gCommit').disabled = running || locked || !chosen.length || over;
-    $('#gStatus').textContent = over ? 'OVER CAPACITY' : chosen.length ? 'READY TO COMMIT' : 'AWAITING M_b';
+    $('#gStatus').textContent = over ? 'Over capacity' : chosen.length ? 'Ready to commit' : 'Awaiting M_b';
   }
 
   async function commit() {
@@ -293,11 +293,11 @@
     const runner = $('#gRunner'), log = $('#gLog'), track = $$('#gTrack i'), act = $('#gAct'), deb = $('#gDebrief');
     runner.hidden = false; deb.hidden = true; log.innerHTML = '';
     track.forEach(t => { t.className = ''; t.title = ''; });
-    $('#gStatus').textContent = 'EXECUTOR RUNNING';
+    $('#gStatus').textContent = 'Executor running';
     runner.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'nearest' });
     const line = (txt, cls = '') => { const el = h('div', cls, null, log); el.textContent = txt; while (log.children.length > 8) log.firstChild.remove(); };
-    line(`> LOAD M_b · ${used.toLocaleString()} chars · r = ${(used / m.total * 100).toFixed(1)}%`, 'd');
-    line(`> RESTORE BOUNDARY STATE b = ${CB.BND[m.b]} · BUDGET ${m.budget}`, 'd');
+    line(`› load M_b · ${used.toLocaleString()} chars · r = ${(used / m.total * 100).toFixed(1)}%`, 'd');
+    line(`› restore boundary state b = ${CB.BND[m.b]} · budget ${m.budget}`, 'd');
     sfx.whir();
     await sleep(REDUCED ? 0 : 600);
     for (let k = 0; k < r.acts.length; k++) {
@@ -310,7 +310,7 @@
     }
     const ok = r.outcome === 'ok';
     const rank = rankOf(m, r, picks);
-    line(ok ? `> TASK COMPLETE · ${r.used}/${m.budget} ACTIONS · PAR ${m.par}` : `> RUN FAILED · ${({ early: 'EARLY STOP', budget: 'BUDGET EXHAUSTED', cgd: 'REQUIREMENT VIOLATED' })[r.outcome]}`, ok ? 'g' : 'r');
+    line(ok ? `› task complete · ${r.used}/${m.budget} actions · par ${m.par}` : `› run failed · ${({ early: 'early stop', budget: 'budget exhausted', cgd: 'requirement violated' })[r.outcome]}`, ok ? 'g' : 'r');
     if (ok) sfx.ok(); else sfx.stamp();
     results[m.id] = { ok, rank: rank[0] }; store.set('cb-missions', JSON.stringify(results));
     paintTabs();
@@ -327,10 +327,10 @@
     const best = MODELS.reduce((a, x) => (x[m.dom][m.b] > a[m.dom][m.b] ? x : a));
     deb.hidden = false;
     deb.innerHTML = `
-      <div class="stamp ${ok ? 'ok' : 'bad'} slam">${ok ? 'PASS' : 'FAIL'}</div>
+      <div class="stamp ${ok ? 'ok' : 'bad'} slam">${ok ? 'Pass' : 'Fail'}</div>
       <div>
-        <div class="debrief__rank"><small>Rank ${rank[0]} · callsign</small><h4>${rank[1]}</h4><p>${rank[2]}</p></div>
-        <div class="tags">${r.errs.length ? r.errs.map(e => `<span style="--pc:var(--red)">${e}</span>`).join('') : '<span style="--pc:var(--d-c)">NO COMPACTION ERRORS</span>'}</div>
+        <div class="debrief__rank"><small>Rank ${rank[0]}</small><h4>${rank[1]}</h4><p>${rank[2]}</p></div>
+        <div class="tags">${r.errs.length ? r.errs.map(e => `<span style="--pc:var(--red)">${e}</span>`).join('') : '<span style="--pc:var(--d-c)">No compaction errors</span>'}</div>
         <div class="debrief__grid">
           <div class="dbx"><span>Actions used</span><b>${r.used} / ${m.budget}</b></div>
           <div class="dbx"><span>Capacity used</span><b>${(used / m.cap * 100).toFixed(0)}%</b></div>
@@ -356,10 +356,10 @@
       toast(`Par ${m.par}: ${m.opt.cost.toLocaleString()} chars. Commit to watch it run.`);
     });
     $('#gShare').addEventListener('click', async () => {
-      const txt = `CompAct-Bench · Mission ${m.id} (${d.name}, b = ${CB.BND[m.b]}): ${ok ? 'PASS' : 'FAIL'} in ${r.used}/${m.budget} actions · rank ${rank[0]} “${rank[1]}” · ${location.href.split('#')[0]}#play`;
+      const txt = `CompAct-Bench · Mission ${m.id} (${d.name}, b = ${CB.BND[m.b]}): ${ok ? 'pass' : 'fail'} in ${r.used}/${m.budget} actions · rank ${rank[0]} “${rank[1]}” · ${location.href.split('#')[0]}#play`;
       toast((await copyText(txt)) ? 'Result copied' : 'Copy failed');
     });
-    $('#gStatus').textContent = ok ? 'MISSION COMPLETE' : 'MISSION FAILED';
+    $('#gStatus').textContent = ok ? 'Mission complete' : 'Mission failed';
     running = false; locked = true;
     $('#gCommit').disabled = true;
     $('#gReset').disabled = true;

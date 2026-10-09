@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CompAct-Bench — A Benchmark for Working-Context Compaction in Long-Horizon Agent Tasks</title>
 <meta name="description" content="CompAct-Bench measures whether an agent can still finish a long-horizon task after its working context is compacted. 200 instances, 12 frontier compactors, 56.7% average post-compaction accuracy. arXiv preprint, submitted to ICLR 2027.">
-<meta name="theme-color" content="#07090f">
+<meta name="theme-color" content="#faf9f5">
 <meta property="og:title" content="CompAct-Bench: A Benchmark for Working-Context Compaction in Long-Horizon Agent Tasks">
 <meta property="og:description" content="Every task was solved 3/3 times. Compact the history to 10%, and the best model finishes only 68.5%.">
 <meta property="og:type" content="website">
@@ -14,20 +14,18 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=JetBrains+Mono:wght@400;500;700&family=Special+Elite&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..600;1,8..60,300..600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 
-<div class="grain" aria-hidden="true"></div>
-<div class="cursor" id="cursor" aria-hidden="true"><i></i></div>
 
 <!-- ============================== NAV ============================== -->
 <nav class="nav" id="nav">
   <a class="nav__brand" href="#top" aria-label="CompAct-Bench home">
-    <svg class="nav__patch" viewBox="0 0 30 22" aria-hidden="true"><rect x="1" y="1" width="28" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="4" y="15" width="22" height="1.6" fill="var(--yellow)"/><rect x="4" y="16.6" width="22" height="1.6" fill="var(--red)"/><rect x="8" y="6" width="14" height="6" rx="3" fill="currentColor"/><g class="spin"><circle cx="11" cy="9" r="2" fill="var(--amber)"/></g><g class="spin"><circle cx="19" cy="9" r="1.4" fill="var(--amber)"/></g></svg>
-    <span>CompAct<b>/</b>Bench</span>
+    <svg class="spark" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.5c.7 0 1.1 3.6 1.6 6.3.4-2.6 2.6-5.6 3.2-5.3.6.3-.9 3.8-2.2 6.1 2-1.6 5.5-3.1 5.8-2.5.3.6-2.6 2.8-5 3.9 2.6-.1 6.3.6 6.3 1.3 0 .7-3.7 1.2-6.3 1.3 2.4 1.1 5.3 3.3 5 3.9-.3.6-3.8-.9-5.8-2.5 1.3 2.3 2.8 5.8 2.2 6.1-.6.3-2.8-2.7-3.2-5.3-.5 2.7-.9 6.3-1.6 6.3s-1.1-3.6-1.6-6.3c-.4 2.6-2.6 5.6-3.2 5.3-.6-.3.9-3.8 2.2-6.1-2 1.6-5.5 3.1-5.8 2.5-.3-.6 2.6-2.8 5-3.9-2.6-.1-6.3-.6-6.3-1.3 0-.7 3.7-1.2 6.3-1.3-2.4-1.1-5.3-3.3-5-3.9.3-.6 3.8.9 5.8 2.5-1.3-2.3-2.8-5.8-2.2-6.1.6-.3 2.8 2.7 3.2 5.3.5-2.7.9-6.3 1.6-6.3z"/></svg>
+    <span>CompAct<b>-</b>Bench</span>
   </a>
   <div class="nav__links">
     <a href="#overview">Overview</a>
@@ -40,7 +38,7 @@
     <a href="#cite">Cite</a>
   </div>
   <div class="nav__tools">
-    <div class="met" title="Tape counter · scroll position"><span>TAPE</span><b id="met">000</b></div>
+    <div class="met" hidden><b id="met">000</b></div>
     <button class="icon-btn" id="soundBtn" title="Toggle sound" aria-label="Toggle sound" aria-pressed="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="snd-on" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/><path class="snd-off" d="M17 9l5 6M22 9l-5 6"/></svg>
     </button>
@@ -56,10 +54,10 @@
   <canvas class="hero__gl" id="hero3d" aria-hidden="true"></canvas>
   <div class="hero__vign" aria-hidden="true"></div>
   <div class="hero__grid-bg" aria-hidden="true"></div>
-  <div class="line-tag" id="tagPile" aria-hidden="true"><b>H<sub>b</sub></b> · TOKEN PILE</div>
-  <div class="line-tag" id="tagPress" aria-hidden="true"><b>C<sub>φ</sub></b> · COMPACT 10 → 1</div>
-  <div class="line-tag" id="tagComp" aria-hidden="true"><b>EXECUTOR</b> · RESUME FROM M<sub>b</sub></div>
-  <div class="line-tag" id="tagBins" aria-hidden="true"><b id="tagBinsTxt">PASS 0 · FAIL 0</b></div>
+  <div class="line-tag" id="tagPile" aria-hidden="true"><b>H<sub>b</sub></b> · token pile</div>
+  <div class="line-tag" id="tagPress" aria-hidden="true"><b>C<sub>φ</sub></b> · compact 10 → 1</div>
+  <div class="line-tag" id="tagComp" aria-hidden="true"><b>Executor</b> · resume from M<sub>b</sub></div>
+  <div class="line-tag" id="tagBins" aria-hidden="true"><b id="tagBinsTxt">Pass 0 · Fail 0</b></div>
 
   <div class="hero__wrap">
     <div class="hero__copy">
@@ -105,18 +103,12 @@
 
     <!-- telemetry -->
     <div class="telemetry" aria-label="Benchmark telemetry">
-      <div class="tm"><span>INSTANCES</span><b>200</b></div>
-      <div class="tm"><span>COMPACTORS</span><b>12</b></div>
-      <div class="tm"><span>RETENTION</span><b>10%</b></div>
-      <div class="tm"><span>AVG Acc</span><b>56.7</b></div>
-      <div class="tm tm--hot"><span>BEST Acc</span><b>68.5</b></div>
-      <div class="tm tm--live"><span id="tmPhase">LINE · STARTING</span><b><i id="tmHb">0.0K</i> → <i id="tmMb">0.00K</i></b></div>
-    </div>
-  </div>
-
-  <div class="ticker" aria-hidden="true">
-    <div class="ticker__track" id="ticker">
-      <span>RECORD</span><i>▸</i><span>CUT AT b</span><i>▸</i><span>COMPACT H<sub>b</sub> → M<sub>b</sub></span><i>▸</i><span>RESUME UNDER T − b</span><i>▸</i><span>MEASURE</span><i>●</i><span>SEARCH 79</span><i>◆</i><span>CODING 96</span><i>◆</i><span>WORKSPACE 25</span><i>●</i><span>ARXIV PREPRINT · SUBMITTED TO ICLR 2027</span><i>●</i>
+      <div class="tm"><span>Instances</span><b>200</b></div>
+      <div class="tm"><span>Compactors</span><b>12</b></div>
+      <div class="tm"><span>Retention</span><b>10%</b></div>
+      <div class="tm"><span>Average accuracy</span><b>56.7</b></div>
+      <div class="tm tm--hot"><span>Best accuracy</span><b>68.5</b></div>
+      <div class="tm tm--live"><span id="tmPhase">Line · starting</span><b><i id="tmHb">0.0K</i> → <i id="tmMb">0.00K</i></b></div>
     </div>
   </div>
 </header>
@@ -140,7 +132,7 @@
     </div>
 
     <figure class="panel reveal" data-d="1">
-      <div class="panel__hd"><span class="panel__id">FIG. 1</span><span class="panel__t">Benchmark overview · live replay</span><span class="panel__st"><i class="led on"></i>LOOPING</span></div>
+      <div class="panel__hd"><span class="panel__id">Fig. 1</span><span class="panel__t">Benchmark overview · live replay</span><span class="panel__st"><i class="led on"></i>Looping</span></div>
       <div class="screen overview" id="overview-fig"></div>
       <figcaption class="panel__cap">Successful trajectories are cut at 25 / 50 / 75%, an evaluated LM compacts the history H<sub>b</sub> into M<sub>b</sub>, and the executor must complete the original task under the remaining action budget. Outcomes are sampled from the paper's mean accuracy per domain and boundary.</figcaption>
     </figure>
@@ -160,13 +152,13 @@
   </aside>
   <div class="section__main">
     <div class="eyebrow eyebrow--sec reveal">§2 · Benchmark</div>
-    <h2 class="h2 reveal">Three tapes, three places to keep state.<span class="dot"></span></h2>
+    <h2 class="h2 reveal">Three domains, three places to keep state.<span class="dot"></span></h2>
     <p class="lead reveal">Tasks come from three agent settings with very different context scales, from 8.8K tokens per SWE-bench trajectory to 122.8K on CompanyBench. Each retained task passed all three screening runs (pass<sup>3</sup>) and has at least eight interaction rounds.</p>
 
     <div class="carts" id="carts"></div>
 
     <div class="panel reveal">
-      <div class="panel__hd"><span class="panel__id">TAB. 1 / 11</span><span class="panel__t">Data card · tasks and reference trajectories by boundary</span><span class="panel__st">TOKENS IN K</span></div>
+      <div class="panel__hd"><span class="panel__id">Table 1 / 11</span><span class="panel__t">Data card · tasks and reference trajectories by boundary</span><span class="panel__st">Tokens in K</span></div>
       <div class="tablewrap"><table class="dtable" id="dataTable"></table></div>
     </div>
 
@@ -181,7 +173,7 @@
 
     <div class="grid2">
       <div class="panel reveal">
-        <div class="panel__hd"><span class="panel__id">CHECKLIST</span><span class="panel__t">Held fixed across compactors</span><span class="panel__st"><i class="led on"></i>GO</span></div>
+        <div class="panel__hd"><span class="panel__id">Checklist</span><span class="panel__t">Held fixed across compactors</span><span class="panel__st"><i class="led on"></i>Locked</span></div>
         <ul class="checklist">
           <li class="is-locked"><b>Task instruction t</b><span>identical prompt and retained head</span></li>
           <li class="is-locked"><b>Boundary environment state</b><span>reconstructed at action b</span></li>
@@ -191,7 +183,7 @@
         </ul>
       </div>
       <div class="panel reveal" data-d="1">
-        <div class="panel__hd"><span class="panel__id">TAB. 6</span><span class="panel__t">Downstream execution settings</span><span class="panel__st">FIXED</span></div>
+        <div class="panel__hd"><span class="panel__id">Table 6</span><span class="panel__t">Downstream execution settings</span><span class="panel__st">Fixed</span></div>
         <div class="tablewrap"><table class="dtable dtable--compact">
           <thead><tr><th>Domain</th><th>Harness</th><th>Executor</th><th>Evaluation</th></tr></thead>
           <tbody>
@@ -208,7 +200,7 @@
     </div>
 
     <div class="panel reveal">
-      <div class="panel__hd"><span class="panel__id">TAB. 9</span><span class="panel__t">Iterative Ratio Calibration · realized retention at the 10% target</span><span class="panel__st">2,400 CONTEXTS · 86.0% IN TOL.</span></div>
+      <div class="panel__hd"><span class="panel__id">Table 9</span><span class="panel__t">Iterative Ratio Calibration · realized retention at the 10% target</span><span class="panel__st">2,400 contexts · 86.0% in tolerance</span></div>
       <div class="irc" id="irc"></div>
       <p class="panel__cap">Each row shows the median and IQR of r<sub>actual</sub> = ℓ(M<sub>b</sub>) / ℓ(H<sub>b</sub>) for one compactor, the shaded band is the tolerance [0.097, 0.103], and the right column gives the share of contexts inside it. Output length is controlled, so accuracy differences reflect <em>what</em> is kept, not how much.</p>
     </div>
@@ -223,11 +215,11 @@
   </aside>
   <div class="section__main">
     <div class="eyebrow eyebrow--sec reveal">§3 · Leaderboard</div>
-    <h2 class="h2 reveal">The tape gets thinner. The task gets harder.<span class="dot"></span></h2>
+    <h2 class="h2 reveal">The memory gets shorter. The task gets harder.<span class="dot"></span></h2>
     <p class="lead reveal">Strict Avg@3 post-compaction accuracy at a 10% retention target. Overall scores span <strong>46.0%</strong> to <strong>68.5%</strong>; the 95% bootstrap intervals of the strongest and weakest compactors do not overlap. Sort any column, filter by boundary, open a row for its stage profile.</p>
 
     <div class="panel lb reveal">
-      <div class="panel__hd"><span class="panel__id">TAB. 2</span><span class="panel__t">Post-compaction task accuracy (%)</span><span class="panel__st" id="lbStatus">ALL BOUNDARIES</span></div>
+      <div class="panel__hd"><span class="panel__id">Table 2</span><span class="panel__t">Post-compaction task accuracy (%)</span><span class="panel__st" id="lbStatus">All boundaries</span></div>
       <div class="lb__ctl">
         <div class="seg-ctl" id="lbBoundary" role="tablist" aria-label="Boundary filter">
           <button class="is-on" data-b="3">All</button><button data-b="0">b = 25%</button><button data-b="1">b = 50%</button><button data-b="2">b = 75%</button>
@@ -264,21 +256,21 @@
   <div class="section__main">
     <div class="eyebrow eyebrow--sec reveal">§4 · Analysis</div>
     <h2 class="h2 reveal">History length does not explain it. State location does.<span class="dot"></span></h2>
-    <p class="lead reveal">Later boundaries always hand the compactor a longer reel, yet Search gets worse and Coding gets better. A repository keeps edits on disk; search evidence lives only in the conversation and must survive inside M<sub>b</sub>.</p>
+    <p class="lead reveal">Later boundaries always hand the compactor a longer history, yet Search gets worse and Coding gets better. A repository keeps edits on disk; search evidence lives only in the conversation and must survive inside M<sub>b</sub>.</p>
 
     <div class="panel reveal">
-      <div class="panel__hd"><span class="panel__id">FIG. 3</span><span class="panel__t">Average H<sub>b</sub> tokens handed to the compactor</span><span class="panel__st">REEL AREA ∝ TOKENS</span></div>
+      <div class="panel__hd"><span class="panel__id">Fig. 3</span><span class="panel__t">Average H<sub>b</sub> tokens handed to the compactor</span><span class="panel__st">Circle area ∝ tokens</span></div>
       <div class="screen reels" id="reels"></div>
     </div>
 
     <div class="grid2">
       <div class="panel reveal">
-        <div class="panel__hd"><span class="panel__id">FIG. 4a</span><span class="panel__t">Coding · the repository is a second tape</span><span class="panel__st">TAB. 14</span></div>
+        <div class="panel__hd"><span class="panel__id">Fig. 4a</span><span class="panel__t">Coding · the repository is a second tape</span><span class="panel__st">Table 14</span></div>
         <p class="panel__sub">With no history at all, continuing from the reconstructed boundary state beats starting over by up to <strong>+56.3</strong> pts. M<sub>b</sub> still adds on top of it at 50% and 75%.</p>
         <div class="gbars" id="persistCoding"></div>
       </div>
       <div class="panel reveal" data-d="1">
-        <div class="panel__hd"><span class="panel__id">FIG. 4b</span><span class="panel__t">Search · the context is the only tape</span><span class="panel__st">TAB. 14</span></div>
+        <div class="panel__hd"><span class="panel__id">Fig. 4b</span><span class="panel__t">Search · the context is the only tape</span><span class="panel__st">Table 14</span></div>
         <p class="panel__sub">Without H<sub>b</sub>, search continuations collapse to <strong>7.4%</strong> at the late boundary. M<sub>b</sub> buys a steady <strong>+26–27</strong> pts: the evidence lives nowhere else.</p>
         <div class="gbars" id="persistSearch"></div>
       </div>
@@ -288,7 +280,7 @@
     <p class="lead reveal">Failed continuations from all twelve compactors were audited unit by unit against H<sub>b</sub>. Omission makes the agent redo what it already did. Distortion makes it believe the wrong state, and stop.</p>
 
     <div class="panel reveal">
-      <div class="panel__hd"><span class="panel__id">AUDIT</span><span class="panel__t">All unit judgments · H<sub>b</sub> vs. M<sub>b</sub></span><span class="panel__st">APP. G</span></div>
+      <div class="panel__hd"><span class="panel__id">Audit</span><span class="panel__t">All unit judgments · H<sub>b</sub> vs. M<sub>b</sub></span><span class="panel__st">Appendix G</span></div>
       <div class="audit__bar" id="audit"></div>
       <div class="audit__key" id="auditKey"></div>
     </div>
@@ -312,11 +304,11 @@
 
     <div class="grid2 grid2--wide">
       <div class="panel reveal">
-        <div class="panel__hd"><span class="panel__id">FIG. 5a</span><span class="panel__t">Error prevalence by failure type</span><span class="panel__st">TAB. 16</span></div>
+        <div class="panel__hd"><span class="panel__id">Fig. 5a</span><span class="panel__t">Error prevalence by failure type</span><span class="panel__st">Table 16</span></div>
         <div class="fly" id="butterfly"></div>
       </div>
       <div class="panel reveal" data-d="1">
-        <div class="panel__hd"><span class="panel__id">FIG. 5b</span><span class="panel__t">Behavior shift when an error is present (pp)</span><span class="panel__st">TAB. 17</span></div>
+        <div class="panel__hd"><span class="panel__id">Fig. 5b</span><span class="panel__t">Behavior shift when an error is present (pp)</span><span class="panel__st">Table 17</span></div>
         <div class="heat" id="heat"></div>
         <div class="heat__read" id="heatRead"></div>
       </div>
@@ -365,7 +357,7 @@
     <dl class="tblock"><dt>DWG</dt><dd>CB-07</dd><dt>MODE</dt><dd>For fun</dd><dt>SHEET</dt><dd>7 / 8</dd></dl>
   </aside>
   <div class="section__main">
-    <div class="eyebrow eyebrow--sec reveal">§7 · Personnel file</div>
+    <div class="eyebrow eyebrow--sec reveal">§7 · Quiz</div>
     <h2 class="h2 reveal">Which compactor are you?<span class="dot"></span></h2>
     <p class="lead reveal">Six questions about how you take notes when you are interrupted. We match your answers against the Search / Coding / Workspace profiles of the twelve compactors in Table 2. Entirely unscientific, numerically honest.</p>
     <div class="quiz panel reveal" id="quizBox"></div>
@@ -382,7 +374,7 @@
     <div class="eyebrow eyebrow--sec reveal">Citation</div>
     <h2 class="h2 reveal">Cite CompAct-Bench<span class="dot"></span></h2>
     <div class="panel reveal">
-      <div class="panel__hd"><span class="panel__id">BIBTEX</span><span class="panel__t">arXiv preprint · submitted to ICLR 2027</span><button class="btn btn--sm copy" id="copyBtn">Copy</button></div>
+      <div class="panel__hd"><span class="panel__id">BibTeX</span><span class="panel__t">arXiv preprint · submitted to ICLR 2027</span><button class="btn btn--sm copy" id="copyBtn">Copy</button></div>
 <pre class="screen bib" id="bib">@article{chen2026compactbench,
   title   = {CompAct-Bench: A Benchmark for Working-Context
              Compaction in Long-Horizon Agent Tasks},
@@ -418,10 +410,10 @@
 <script defer src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-<script defer src="script.js?v=3"></script>
-<script defer src="js/factory3d.js?v=4"></script>
-<script defer src="js/cases.js?v=3"></script>
-<script defer src="js/game.js?v=3"></script>
-<script defer src="js/quiz.js?v=3"></script>
+<script defer src="script.js?v=4"></script>
+<script defer src="js/factory3d.js?v=5"></script>
+<script defer src="js/cases.js?v=4"></script>
+<script defer src="js/game.js?v=4"></script>
+<script defer src="js/quiz.js?v=4"></script>
 </body>
 </html>

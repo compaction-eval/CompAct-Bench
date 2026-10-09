@@ -42,9 +42,9 @@
   ];
   const AX = ['s', 'c', 'w'], AXN = { s: 'Search', c: 'Coding', w: 'Workspace' }, AXC = { s: 'var(--d-s)', c: 'var(--d-c)', w: 'var(--d-w)' };
   const ARCH = {
-    s: ['THE ARCHIVIST', 'You keep the evidence trail alive: what was searched, what was ruled out, and what is still only a hunch.'],
-    c: ['THE ENGINEER', 'You trust what is persisted. If it is on disk, you leave a pointer instead of a copy.'],
-    w: ['THE OPERATOR', 'You track state across many moving parts: files, people, deadlines and tools.']
+    s: ['The Archivist', 'You keep the evidence trail alive: what was searched, what was ruled out, and what is still only a hunch.'],
+    c: ['The Engineer', 'You trust what is persisted. If it is on disk, you leave a pointer instead of a copy.'],
+    w: ['The Operator', 'You track state across many moving parts: files, people, deadlines and tools.']
   };
   const stats = AX.map(a => {
     const v = MODELS.map(m => m[a][3]);
@@ -57,14 +57,14 @@
 
   let step = 0, vec = [0, 0, 0], busy = false;
 
-  const patchSVG = '<svg viewBox="0 0 30 22"><rect x="1" y="1" width="28" height="20" rx="3" fill="none" stroke="#f1ead9" stroke-width="1.8"/><rect x="4" y="15" width="22" height="1.6" fill="#f5b91d"/><rect x="4" y="16.6" width="22" height="1.6" fill="#e2381b"/><rect x="8" y="6" width="14" height="6" rx="3" fill="#f1ead9"/><circle cx="11" cy="9" r="2" fill="#ffb000"/><circle cx="19" cy="9" r="1.4" fill="#ffb000"/></svg>';
+  const patchSVG = '<svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9 4.9 19.1" stroke="#faf9f5" stroke-width="2.2" stroke-linecap="round"/></svg>';
 
   function intro() {
     box.innerHTML = `
-      <div class="panel__hd"><span class="panel__id">FORM CB-7</span><span class="panel__t">Compactor personnel assessment</span><span class="panel__st"><i class="led amber"></i>6 QUESTIONS</span></div>
+      <div class="panel__hd"><span class="panel__id">Quiz</span><span class="panel__t">What kind of compactor are you?</span><span class="panel__st">6 questions</span></div>
       <div class="qz__body">
-        <div><div class="qz__n">00</div><h3 class="qz__q">Before the context window fills up, every agent needs someone to decide what survives. Let’s find out what kind of compactor you would be.</h3></div>
-        <div class="qz__opts"><button class="qz__opt" id="qzGo" type="button"><b>▶</b><span>Begin assessment</span></button>
+        <div><div class="qz__n">Intro</div><h3 class="qz__q">Before the context window fills up, every agent needs someone to decide what survives. Let’s find out what kind of compactor you would be.</h3></div>
+        <div class="qz__opts"><button class="qz__opt" id="qzGo" type="button"><b>→</b><span>Begin</span></button>
         <p class="qz__note">Your answers stay in this browser. Matching uses the Search / Coding / Workspace accuracies from Table 2, z-scored across the 12 compactors.</p></div>
       </div>`;
     $('#qzGo').addEventListener('click', () => { sfx.click(); step = 0; vec = [0, 0, 0]; ask(); });
@@ -73,10 +73,10 @@
   function ask() {
     const [q, opts] = Q[step];
     box.innerHTML = `
-      <div class="panel__hd"><span class="panel__id">FORM CB-7</span><span class="panel__t">Question ${step + 1} of ${Q.length}</span><span class="panel__st">${Math.round(step / Q.length * 100)}% COMPLETE</span></div>
+      <div class="panel__hd"><span class="panel__id">Quiz</span><span class="panel__t">Question ${step + 1} of ${Q.length}</span><span class="panel__st">${Math.round(step / Q.length * 100)}% done</span></div>
       <div class="qz__prog">${Q.map((_, i) => `<i class="${i < step ? 'on' : ''}"></i>`).join('')}</div>
       <div class="qz__body">
-        <div><div class="qz__n">${String(step + 1).padStart(2, '0')}</div><h3 class="qz__q">${q}</h3></div>
+        <div><div class="qz__n">${step + 1}.</div><h3 class="qz__q">${q}</h3></div>
         <div class="qz__opts">${opts.map((o, i) => `<button class="qz__opt" type="button" data-i="${i}"><b>${'ABCD'[i]}</b><span>${o[0]}</span></button>`).join('')}</div>
       </div>`;
     $$('.qz__opt', box).forEach(b => b.addEventListener('click', async () => {
@@ -101,35 +101,31 @@
     const id = (mi * 7919 + vec.reduce((a, v) => a * 31 + v + 7, 3)).toString(16).toUpperCase().slice(-5).padStart(5, '0');
     sfx.ok();
     box.innerHTML = `
-      <div class="panel__hd"><span class="panel__id">FORM CB-7</span><span class="panel__t">Assessment complete</span><span class="panel__st"><i class="led on"></i>MATCH FOUND</span></div>
+      <div class="panel__hd"><span class="panel__id">Quiz</span><span class="panel__t">Your result</span><span class="panel__st"><i class="led on"></i>Match found</span></div>
       <div class="qz__res">
         <div class="badge3d" id="qzBadge">
           <div class="badge">
-            <div class="badge__top"><span>PERSONNEL FILE<br>CB-200 · COMPACTION LINE</span>${patchSVG}</div>
+            <div class="badge__top"><span>CompAct-Bench<br>Compactor profile</span>${patchSVG}</div>
             <div class="badge__stripes"></div>
             <div class="badge__body">
-              <small>YOU COMPACT LIKE</small>
+              <small>You compact like</small>
               <div class="badge__name">${m.n}</div>
               <div class="badge__cfg">reasoning: ${m.cfg} · overall ${m.o.toFixed(1)}%</div>
               <div class="badge__arch">${arch}</div>
               <div class="badge__photo"><svg viewBox="0 0 200 92" aria-hidden="true">
-                <rect x="2" y="2" width="196" height="88" rx="8" fill="#1c1a17"/>
-                <rect x="12" y="8" width="176" height="54" rx="4" fill="#efe7d6"/>
-                <rect x="12" y="50" width="176" height="3" fill="#f5b91d"/><rect x="12" y="53" width="176" height="3" fill="#ef7a1c"/><rect x="12" y="56" width="176" height="3" fill="#e2381b"/><rect x="12" y="59" width="176" height="3" fill="${AXC[bestAx].replace('var(--d-s)', '#e0601a').replace('var(--d-c)', '#0f8d67').replace('var(--d-w)', '#2b62d4')}"/>
-                <text x="20" y="24" font-family="Archivo" font-weight="900" font-size="15" fill="#191714">${m.n.split(/\s+/).map(w => w[0]).join('').slice(0, 3).toUpperCase()}-${String(Math.round(m.o * 10))}</text>
-                <text x="180" y="24" text-anchor="end" font-family="JetBrains Mono" font-size="7" fill="#191714">r = 10%</text>
-                <rect x="60" y="28" width="80" height="20" rx="10" fill="#191714"/>
-                <g class="spin" style="animation-duration:${(3 + mi * .3).toFixed(1)}s"><circle cx="76" cy="38" r="7" fill="#efe7d6"/><circle cx="76" cy="38" r="2.6" fill="#191714"/></g>
-                <g class="spin" style="animation-duration:${(1.6 + mi * .2).toFixed(1)}s"><circle cx="124" cy="38" r="5" fill="#efe7d6"/><circle cx="124" cy="38" r="2" fill="#191714"/></g>
-                <path d="M46 90 L56 70 L144 70 L154 90 Z" fill="#45403a"/>
+                <rect x="1" y="1" width="198" height="90" rx="14" fill="#f0eee6"/>
+                ${Array.from({ length: 10 }, (_, i) => `<rect x="${16 + i * 12}" y="${30 - (i % 3) * 4}" width="9" height="${22 + (i % 3) * 8}" rx="2.5" fill="${['#d97757', '#788c5d', '#6a9bcc'][i % 3]}" opacity=".55"/>`).join('')}
+                <path d="M140 46 h10" stroke="#73726c" stroke-width="1.6" stroke-linecap="round"/><path d="M147 42 l4 4 -4 4" fill="none" stroke="#73726c" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="160" y="36" width="22" height="20" rx="4" fill="${AXC[bestAx].replace('var(--d-s)', '#d97757').replace('var(--d-c)', '#788c5d').replace('var(--d-w)', '#6a9bcc')}"/>
+                <text x="16" y="80" font-family="Source Serif 4, Georgia, serif" font-style="italic" font-size="12" fill="#3d3d3a">10 tokens in, 1 out · r = 10%</text>
               </svg></div>
-              <div class="badge__bars">${AX.map(a => `<div class="bbar"><span>${AXN[a].toUpperCase()}</span><i><s style="--bc:${AXC[a]};background:${AXC[a]}" data-w="${m[a][3]}"></s></i><b>${m[a][3].toFixed(1)}</b></div>`).join('')}</div>
+              <div class="badge__bars">${AX.map(a => `<div class="bbar"><span>${AXN[a]}</span><i><s style="--bc:${AXC[a]};background:${AXC[a]}" data-w="${m[a][3]}"></s></i><b>${m[a][3].toFixed(1)}</b></div>`).join('')}</div>
             </div>
-            <div class="badge__foot"><span>ID ${id}</span><span>MATCH ${match}%</span></div>
+            <div class="badge__foot"><span>No. ${id}</span><span>${match}% match</span></div>
           </div>
         </div>
         <div class="qz__rtext">
-          <h3>${arch.charAt(0) + arch.slice(1).toLowerCase()}.</h3>
+          <h3>${arch}.</h3>
           <p>${archLine}</p>
           <p>Your closest profile is <b>${m.n} (${m.cfg})</b>: strongest on <b>${AXN[bestAx]}</b> relative to the field (${m[bestAx][3].toFixed(1)}%, #${rankIn(bestAx, m)} of 12), and comparatively weaker on <b>${AXN[worstAx]}</b> (${m[worstAx][3].toFixed(1)}%). Overall post-compaction accuracy: <b>${m.o.toFixed(1)}%</b>.</p>
           <div class="qz__alt">Runner-up: <b>${alt.n} (${alt.cfg})</b> · your vector S ${vec[0] >= 0 ? '+' : ''}${vec[0]} / C ${vec[1] >= 0 ? '+' : ''}${vec[1]} / W ${vec[2] >= 0 ? '+' : ''}${vec[2]}</div>
