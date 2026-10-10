@@ -151,6 +151,9 @@
   const hlFns = [];
   const onHL = f => hlFns.push(f);
   const hl = i => hlFns.forEach(f => f(i));
+  const domFns = [];
+  const onDom = f => domFns.push(f);
+  const dom = k => domFns.forEach(f => f(k));
 
   window.CB = { $, $$, clamp, lerp, ease, easeIO, seg, sleep, rand, svg, h, store, onceVisible, animateNum, toast, copyText, REDUCED, MODELS, DOM, KEYS, BND, avgOf, overallAt, ERR, sfx, onHL, hl };
 
@@ -379,6 +382,12 @@
       const el = h('div', 'cart reveal', null, host);
       el.dataset.d = String(i + 1);
       el.style.setProperty('--dc', d.color);
+      el.tabIndex = 0;
+      el.addEventListener('mouseenter', () => dom(k));
+      el.addEventListener('mouseleave', () => dom(null));
+      el.addEventListener('focus', () => dom(k));
+      el.addEventListener('blur', () => dom(null));
+      onDom(x => el.classList.toggle('is-dim', !!x && x !== k));
       el.innerHTML = `
         <div class="cart__shell">
           <div class="cart__label">
@@ -399,13 +408,22 @@
     let html = '<thead><tr><th>Domain</th><th>Boundary</th><th class="num"># Tasks</th><th class="num">Avg. rounds</th><th class="num">Avg. full tok</th><th class="num">Avg. H<sub>b</sub> tok</th><th>H<sub>b</sub> / full</th></tr></thead><tbody>';
     KEYS.forEach(k => {
       const d = DOM[k];
-      html += `<tr class="grp"><td><i class="dk dk--${k}"></i><b>${d.name}</b> · ${d.bench}</td><td>All</td><td class="num"><b>${d.tasks}</b></td><td class="num"><b>${d.rounds}</b></td><td class="num"><b>${d.avg}K</b></td><td class="num">median ${d.med}K</td><td></td></tr>`;
+      html += `<tr class="grp" data-k="${k}" title="Click to collapse or expand"><td><span class="caret"></span><i class="dk dk--${k}"></i><b>${d.name}</b> · ${d.bench}</td><td>All</td><td class="num"><b>${d.tasks}</b></td><td class="num"><b>${d.rounds}</b></td><td class="num"><b>${d.avg}K</b></td><td class="num">median ${d.med}K</td><td></td></tr>`;
       [0, 1, 2].forEach(b => {
         const r = d.tok[b] / d.full[b];
-        html += `<tr><td></td><td>b = ${BND[b]}</td><td class="num">${d.nb[b]}</td><td class="num">${d.rb[b]}</td><td class="num">${d.full[b]}K</td><td class="num">${d.tok[b]}K</td><td><span class="spark" style="width:${(r * 120).toFixed(0)}px;--bc:${d.color}"></span>${(r * 100).toFixed(0)}%</td></tr>`;
+        html += `<tr class="sub" data-k="${k}"><td></td><td>b = ${BND[b]}</td><td class="num">${d.nb[b]}</td><td class="num">${d.rb[b]}</td><td class="num">${d.full[b]}K</td><td class="num">${d.tok[b]}K</td><td><span class="spark" style="width:${(r * 120).toFixed(0)}px;--bc:${d.color}"></span>${(r * 100).toFixed(0)}%</td></tr>`;
       });
     });
     t.innerHTML = html + '</tbody>';
+    t.addEventListener('click', e => {
+      const g = e.target.closest('tr.grp'); if (!g) return;
+      const off = g.classList.toggle('is-collapsed');
+      $$(`tr.sub[data-k="${g.dataset.k}"]`, t).forEach(r => { r.hidden = off; });
+      sfx.click();
+    });
+    t.addEventListener('mouseover', e => { const r = e.target.closest('tr[data-k]'); dom(r ? r.dataset.k : null); });
+    t.addEventListener('mouseleave', () => dom(null));
+    onDom(k => $$('tr[data-k]', t).forEach(r => r.classList.toggle('is-dim', !!k && r.dataset.k !== k)));
   }
 
   function irc() {
@@ -413,15 +431,28 @@
     const lo = .0960, hi = .1050;
     const px = v => ((v - lo) / (hi - lo) * 100).toFixed(2) + '%';
     h('div', 'irc__hd', 'Compactor', host); h('div', 'irc__hd', 'Median · IQR of r<sub>actual</sub>', host); h('div', 'irc__hd', 'In tol.', host);
-    MODELS.forEach(m => {
+    const cells = MODELS.map(() => []);
+    const idle = 'Hover a compactor to read its r<sub>actual</sub> distribution · dashed band = tolerance · line = 10% target';
+    const rd = h('div', 'multi__read', idle);
+    host.after(rd);
+    const sel = i => {
+      cells.forEach((arr, j) => arr.forEach(c => c.classList.toggle('is-hl', j === i)));
+      if (i < 0) { rd.innerHTML = idle; return; }
+      const m = MODELS[i], [med, q1, q3, tol, calls] = m.irc;
+      rd.innerHTML = `<b>${m.n} (${m.cfg})</b> · median ${med.toFixed(4)} · IQR [${q1.toFixed(4)}, ${q3.toFixed(4)}] · <b>${tol.toFixed(1)}%</b> within tolerance · ${calls} calls / instance`;
+    };
+    onHL(sel);
+    host.addEventListener('mouseleave', () => sel(-1));
+    MODELS.forEach((m, mi) => {
       const [med, q1, q3, tol] = m.irc;
-      h('div', 'irc__nm', `${m.n} <small class="mono" style="color:var(--muted)">${m.cfg}</small>`, host);
+      const nm = h('div', 'irc__nm', `${m.n} <small class="mono" style="color:var(--muted)">${m.cfg}</small>`, host);
       const tr = h('div', 'irc__tr', null, host);
       const band = h('i', 'irc__band', null, tr); band.style.left = px(.097); band.style.width = `calc(${px(.103)} - ${px(.097)})`;
       h('i', 'irc__tgt', null, tr).style.left = px(.1);
       const iqr = h('i', 'irc__iqr', null, tr); iqr.style.left = px(q1); iqr.style.width = `calc(${px(q3)} - ${px(q1)})`;
       const md = h('i', 'irc__med', null, tr); md.style.left = px(med); md.title = `median ${med}`;
-      h('div', 'irc__tol' + (tol < 70 ? ' lo' : ''), tol.toFixed(1) + '%', host);
+      const tl = h('div', 'irc__tol' + (tol < 70 ? ' lo' : ''), tol.toFixed(1) + '%', host);
+      [nm, tr, tl].forEach(c => { cells[mi].push(c); c.addEventListener('mouseenter', () => sel(mi)); });
     });
     h('div', null, '', host);
     const ax = h('div', 'irc__ax', null, host);
@@ -450,8 +481,12 @@
       const r = h('div', 'lb__row', `<span class="lb__rk">00</span><span class="lb__nm">${m.n}<small>${m.cfg}</small></span>` +
         COLS.map(([k, , col]) => `<span class="lb__c" data-k="${k}"><span class="lb__v">0.0</span><span class="lb__bar" style="--bc:${col}"><i></i><s></s></span><span class="lb__ci-t"></span></span>`).join(''), body);
       r.setAttribute('role', 'row');
+      r.tabIndex = 0;
       r.addEventListener('mouseenter', () => hl(i));
       r.addEventListener('mouseleave', () => hl(-1));
+      r.addEventListener('focus', () => hl(i));
+      r.addEventListener('blur', () => hl(-1));
+      r.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); r.click(); } });
       r.addEventListener('click', () => { st.open = st.open === i ? -1 : i; sfx.click(); render(); });
       return r;
     });
@@ -460,7 +495,7 @@
 
     const fillDetail = i => {
       const m = MODELS[i];
-      const grp = (k, name, col) => `<div><h5>${name} · by boundary</h5><div class="lb__dbars">${[0, 1, 2].map(b => `<div><b>${m[k][b].toFixed(1)}</b><i style="height:${(m[k][b] * .5).toFixed(1)}px;--bc:${col};background:${col}"></i><span>${BND[b]}</span></div>`).join('')}</div></div>`;
+      const grp = (k, name, col) => `<div><h5>${name} · by boundary</h5><div class="lb__dbars">${[0, 1, 2].map(b => `<div><b>${m[k][b].toFixed(1)}</b><i style="height:${(m[k][b] * .5).toFixed(1)}px;--bc:${col}"></i><span>${BND[b]}</span></div>`).join('')}</div></div>`;
       detail.innerHTML = `<div class="lb__dgrid">${grp('s', 'Search', 'var(--d-s)')}${grp('c', 'Coding', 'var(--d-c)')}${grp('w', 'Workspace', 'var(--d-w)')}</div>
         <div class="panel__cap" style="margin-top:8px">IRC · median r<sub>actual</sub> = ${m.irc[0].toFixed(4)} · IQR [${m.irc[1].toFixed(4)}, ${m.irc[2].toFixed(4)}] · ${m.irc[3]}% within tolerance · ${m.irc[4]} calls / instance</div>`;
     };
@@ -519,6 +554,7 @@
       return a[lo] + (a[hi] - a[lo]) * (pos - lo);
     };
     const lines = [];
+    let pinned = -1;
     KEYS.forEach((k, di) => {
       const d = DOM[k];
       const card = h('div', 'mcard', null, grid);
@@ -534,6 +570,12 @@
       const pts = X.map((x, b) => `${x},${y(hi[b])}`).concat([2, 1, 0].map(b => `${X[b]},${y(lo[b])}`)).join(' ');
       svg('polygon', { points: pts, class: 'mband' }, s).style.fill = d.color;
       lines[di] = MODELS.map(m => svg('polyline', { points: X.map((x, b) => `${x},${y(m[k][b])}`).join(' '), class: 'mline' }, s));
+      MODELS.forEach((m, mi) => {
+        const hit = svg('polyline', { points: X.map((x, b) => `${x},${y(m[k][b])}`).join(' '), class: 'mhit' }, s);
+        hit.addEventListener('mouseenter', () => hl(mi));
+        hit.addEventListener('mouseleave', () => hl(pinned));
+        hit.addEventListener('click', () => { pinned = pinned === mi ? -1 : mi; hl(pinned); });
+      });
       const av = svg('polyline', { points: X.map((x, b) => `${x},${y(avgOf(k, b))}`).join(' '), class: 'mavg' }, s);
       av.style.stroke = d.color;
       const marks = [];
@@ -557,7 +599,6 @@
         }, { threshold: .3 });
       }
     });
-    let pinned = -1;
     const chips = MODELS.map((m, mi) => {
       const c = h('button', 'chip', m.n, leg);
       c.addEventListener('mouseenter', () => hl(mi));
@@ -586,15 +627,29 @@
     const g = $('#reels'); if (!g) return;
     h('div', 'reels__hd', '', g);
     KEYS.forEach(k => { h('div', 'reels__hd', DOM[k].name, g).style.color = DOM[k].scolor; });
-    const packs = [];
+    const packs = [], rcells = [];
+    const idle = 'Circle area = average H<sub>b</sub> tokens that the compactor must read · hover a circle';
+    const rd = h('div', 'panel__cap reels__read', idle);
+    g.after(rd);
+    const sel = c => {
+      g.classList.toggle('has-hl', !!c);
+      rcells.forEach(x => x.el.classList.toggle('is-hl', x === c));
+      if (!c) { rd.innerHTML = idle; return; }
+      const d = DOM[c.k];
+      rd.innerHTML = `<b>${d.name}</b> at b = ${BND[c.b]}: <b>${d.tok[c.b]}K</b> tokens of ${d.full[c.b]}K in the full trajectory (${(d.tok[c.b] / d.full[c.b] * 100).toFixed(0)}%)`;
+    };
+    g.addEventListener('mouseleave', () => sel(null));
     [0, 1, 2].forEach(b => {
       h('div', 'reels__rw', BND[b], g);
       KEYS.forEach(k => {
         const tok = DOM[k].tok[b];
         const R = 14 + 42 * Math.sqrt(tok / 90);
         const cell = h('div', 'reel-c', null, g);
+        const rc = { el: cell, k, b };
+        rcells.push(rc);
+        cell.addEventListener('mouseenter', () => sel(rc));
         const s = svg('svg', { viewBox: '-60 -60 120 120', role: 'img', 'aria-label': `${DOM[k].name} at ${BND[b]}: ${tok}K tokens` }, cell);
-        svg('circle', { r: 57, fill: 'none', stroke: 'rgba(20, 20, 19, .1)', 'stroke-dasharray': '2 4' }, s);
+        svg('circle', { r: 57, fill: 'none', stroke: 'rgba(138, 104, 150, .28)', 'stroke-dasharray': '2 4' }, s);
         const pack = svg('circle', { r: 14, class: 'pack', 'stroke-width': 1.2 }, s);
         pack.style.fill = `color-mix(in srgb, ${DOM[k].color} 22%, transparent)`;
         pack.style.stroke = DOM[k].color;
@@ -609,20 +664,43 @@
   function persist() {
     const mk = (host, series, gains) => {
       if (!host) return;
+      const idle = 'Hover a bar or a legend chip to compare the same condition across boundaries · click a chip to hide it';
+      const rd = h('div', 'multi__read', idle);
+      const bars = si => $$(`.gb__b[data-s="${si}"]`, host);
+      const pick = si => {
+        host.classList.toggle('has-s', si >= 0);
+        $$('.gb__b', host).forEach(b => b.classList.toggle('is-hl', +b.dataset.s === si));
+        if (si < 0) { rd.innerHTML = idle; return; }
+        const sr = series[si];
+        rd.innerHTML = `<b>${sr.n}</b> · ${sr.v.map((v, i) => `b = ${BND[i]}: <b>${v.toFixed(1)}</b>`).join(' · ')}`;
+      };
+      host.addEventListener('mouseleave', () => pick(-1));
       [0, 1, 2].forEach(gi => {
         const col = h('div', 'gb', null, host);
         h('div', 'gb__x', BND[gi], col);
         let max = 0;
-        series.forEach(sr => {
+        series.forEach((sr, si) => {
           const v = sr.v[gi]; max = Math.max(max, v);
           const b = h('div', 'gb__b', `<span>${v.toFixed(1)}</span>`, col);
-          b.style.setProperty('--bc', sr.c); b.dataset.h = v;
+          b.style.setProperty('--bc', sr.c); b.dataset.h = v; b.dataset.s = si;
+          b.addEventListener('mouseenter', () => pick(si));
         });
         const gn = gains[gi];
         const chip = h('div', 'gb__gain' + (gn < 0 ? ' neg' : ''), (gn > 0 ? '+' : '') + gn.toFixed(1), col);
         chip.style.top = `calc(${(100 - max).toFixed(1)}% - 46px)`;
       });
-      host.after(h('div', 'gkey', series.map(s => `<span><i style="background:${s.c}"></i>${s.n}</span>`).join('') + '<span><i style="background:var(--red)"></i>gain from M<sub>b</sub></span>'));
+      const key = h('div', 'gkey', series.map((s, si) => `<button type="button" class="gk" data-s="${si}"><i style="background:${s.c}"></i>${s.n}</button>`).join('') + '<span><i style="background:var(--red)"></i>gain from M<sub>b</sub></span>');
+      host.after(key); key.after(rd);
+      $$('.gk', key).forEach(btn => {
+        const si = +btn.dataset.s;
+        btn.addEventListener('mouseenter', () => pick(si));
+        btn.addEventListener('mouseleave', () => pick(-1));
+        btn.addEventListener('click', () => {
+          const off = btn.classList.toggle('is-off');
+          bars(si).forEach(b => b.classList.toggle('is-off', off));
+          sfx.click();
+        });
+      });
       onceVisible(host, () => $$('.gb', host).forEach((col, i) => setTimeout(() => {
         col.classList.add('in');
         $$('.gb__b', col).forEach(b => { b.style.height = b.dataset.h + '%'; });
@@ -645,10 +723,21 @@
       const S = [['Preserved', 69.1, 'var(--d-c)'], ['Omitted', 25.3, 'var(--orange)'], ['Distorted', 5.6, 'var(--bad)'], ['Uncertain', 0.1, 'var(--muted)']];
       const segs = S.map(([n, v, c]) => {
         const d = h('div', null, v > 20 ? `${v}% ${n.toLowerCase()}` : v >= 5 ? `${v}` : '', bar);
-        d.style.background = c; d.title = `${n} ${v}%`;
+        d.style.setProperty('--bc', c); d.title = `${n} ${v}%`;
         return [d, v];
       });
       key.innerHTML = S.map(([n, v, c]) => `<span><i style="background:${c}"></i>${n} ${v}%</span>`).join('');
+      const ks = $$('span', key);
+      const idle = 'Hover a segment or a legend item · each unit of the failed continuations was audited against H<sub>b</sub>';
+      const rd = h('div', 'multi__read', idle);
+      key.after(rd);
+      const sel = i => {
+        segs.forEach(([d], j) => d.classList.toggle('is-dim', i >= 0 && j !== i));
+        ks.forEach((k, j) => k.classList.toggle('is-dim', i >= 0 && j !== i));
+        rd.innerHTML = i < 0 ? idle : `<b>${S[i][0]}</b> · ${S[i][1]}% of audited units`;
+      };
+      segs.forEach(([d], i) => { d.addEventListener('mouseenter', () => sel(i)); d.addEventListener('mouseleave', () => sel(-1)); });
+      ks.forEach((k, i) => { k.addEventListener('mouseenter', () => sel(i)); k.addEventListener('mouseleave', () => sel(-1)); });
       onceVisible(bar, () => segs.forEach(([d, v]) => { d.style.width = v + '%'; }), { threshold: .4 });
     }
     const fly = $('#butterfly');
@@ -662,8 +751,20 @@
         le.style.right = `calc(${(e * sc).toFixed(1)}% + 6px)`;
         re.style.left = `calc(${(b * sc).toFixed(1)}% + 6px)`;
         bars.push([li, e * sc], [ri, b * sc]);
+        row.addEventListener('mouseenter', () => {
+          fly.classList.add('has-hov');
+          $$('.fly__row', fly).forEach(r => r.classList.toggle('is-hov', r === row));
+          const dlt = e - b;
+          any.innerHTML = `<b>${k} · ${n}</b> · early failure <b>${e.toFixed(1)}%</b> · budget exhaustion <b>${b.toFixed(1)}%</b> · ${dlt >= 0 ? 'early-failure' : 'budget-exhaustion'} skew <b>${Math.abs(dlt).toFixed(1)}</b> pts`;
+        });
       });
-      h('div', 'fly__any', 'Any of the six errors: <b>92.5%</b> of early failures · <b>85.8%</b> of budget-exhausted cases', fly);
+      const idleAny = 'Any of the six errors: <b>92.5%</b> of early failures · <b>85.8%</b> of budget-exhausted cases';
+      const any = h('div', 'fly__any', idleAny, fly);
+      fly.addEventListener('mouseleave', () => {
+        fly.classList.remove('has-hov');
+        $$('.fly__row', fly).forEach(r => r.classList.remove('is-hov'));
+        any.innerHTML = idleAny;
+      });
       onceVisible(fly, () => bars.forEach(([el, w], i) => setTimeout(() => { el.style.width = w.toFixed(1) + '%'; }, REDUCED ? 0 : i * 60)), { threshold: .3 });
     }
     const heat = $('#heat'), read = $('#heatRead');

@@ -801,3 +801,97 @@ sup, sub { font-size: .62em; line-height: 0; }
   .grain { display: none; }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* =========================================================================
+   Charts: purple-led gradient fills, softer marks, and per-module interaction
+   states. Page and card backgrounds are untouched.
+   ========================================================================= */
+:root { --chart-hi: rgba(138, 104, 150, .12); --tint: white; }
+[data-theme="dark"] { --chart-hi: rgba(185, 151, 196, .14); }
+
+/* domain cards + data card */
+.cart { outline: none; }
+.cart__shell { transition: transform .4s var(--ease), box-shadow .4s, border-color .4s, opacity .3s, filter .3s; }
+.cart:hover .cart__shell, .cart:focus-visible .cart__shell { box-shadow: 0 18px 34px -20px color-mix(in srgb, var(--dc) 75%, transparent); border-color: color-mix(in srgb, var(--dc) 45%, var(--line)); }
+.cart.is-dim .cart__shell { opacity: .45; filter: saturate(.6); }
+.cart__stripe { background: linear-gradient(90deg, var(--dc), color-mix(in srgb, var(--dc) 40%, var(--tint))); }
+.dtable .spark { height: 10px; border-radius: 0 6px 6px 0; transform-origin: left center; background: linear-gradient(90deg, color-mix(in srgb, var(--bc, var(--ink)) 42%, var(--tint)), var(--bc, var(--ink))); transition: transform .4s var(--ease); }
+.dtable tbody tr:hover .spark { transform: scaleY(1.4); }
+.dtable tr { transition: background .25s, opacity .3s; }
+.dtable tr.is-dim { opacity: .35; }
+.dtable tr.grp { cursor: pointer; }
+.dtable tr.grp:hover { background: var(--chart-hi); }
+.dtable tr.grp .caret { display: inline-block; width: 14px; margin-right: 2px; color: var(--muted); font-size: 11px; transition: transform .35s var(--ease); }
+.dtable tr.grp .caret::before { content: "\25BE"; }
+.dtable tr.grp.is-collapsed .caret { transform: rotate(-90deg); }
+.dtable tr[hidden] { display: none; }
+.dk { background-image: linear-gradient(135deg, rgba(255, 255, 255, .35), transparent); }
+
+/* protocol and domain strips */
+.path::before { background: linear-gradient(90deg, var(--pc), color-mix(in srgb, var(--pc) 40%, var(--tint))); }
+.mission::before { background: linear-gradient(90deg, var(--dc), color-mix(in srgb, var(--dc) 40%, var(--tint))); }
+
+/* interval-range chart */
+.irc__nm, .irc__tr, .irc__tol { transition: background .25s; }
+.irc__nm.is-hl, .irc__tr.is-hl, .irc__tol.is-hl { background: var(--chart-hi); }
+.irc__iqr { height: 5px; margin-top: -2.5px; border-radius: 3px; background: linear-gradient(90deg, var(--amber), var(--amber-2)); }
+.irc__med { background: var(--card); border: 2px solid var(--amber); box-shadow: 0 0 0 3px rgba(172, 134, 185, .25); transition: opacity .4s var(--ease) .5s, transform .35s var(--ease); }
+.irc__tr.is-hl .irc__med { transform: scale(1.4); }
+.irc__band { background: color-mix(in srgb, var(--amber-2) 12%, transparent); border-inline-color: color-mix(in srgb, var(--amber-2) 55%, transparent); }
+.irc__tgt { border-left-color: var(--amber); }
+
+/* leaderboard */
+.lb__row:focus-visible { outline-offset: -2px; border-radius: 6px; }
+.lb__bar { height: 5px; border-radius: 3px; }
+.lb__bar i { border-radius: 3px; background: linear-gradient(90deg, color-mix(in srgb, var(--bc, var(--ink)) 45%, var(--tint)), var(--bc, var(--ink))); }
+.lb__row:hover .lb__bar i, .lb__row.is-hl .lb__bar i { filter: saturate(1.3); }
+.lb__dbars i { border-radius: 5px 5px 0 0; transform-origin: bottom; animation: growY .7s var(--ease) both; background: linear-gradient(180deg, var(--bc), color-mix(in srgb, var(--bc) 45%, var(--tint))); }
+@keyframes growY { from { transform: scaleY(0); } }
+.lb__dbars div:hover i { filter: saturate(1.3) brightness(1.05); }
+
+/* boundary small multiples */
+.mhit { fill: none; stroke: transparent; stroke-width: 10; pointer-events: stroke; cursor: pointer; }
+.mline.is-hl { stroke: var(--amber); }
+.mband { opacity: .2; }
+.mavg { filter: drop-shadow(0 3px 4px rgba(138, 104, 150, .3)); }
+.mdot { stroke-width: 3; }
+
+/* token circles */
+.reel-c { transition: opacity .3s; }
+.reel-c svg { transition: transform .5s var(--ease); }
+.reel-c.is-hl svg { transform: scale(1.08); }
+.reels.has-hl .reel-c:not(.is-hl) { opacity: .4; }
+.reels__read { grid-column: 1 / -1; }
+.reel-c .pack { transition: r 1.4s var(--ease), fill .3s; }
+
+/* persistence bars */
+.gb__b { cursor: pointer; background: linear-gradient(180deg, color-mix(in srgb, var(--bc) 62%, var(--tint)), var(--bc)); transition: height 1.2s var(--ease-snap), opacity .3s, filter .3s; }
+.gbars.has-s .gb__b:not(.is-hl) { opacity: .35; }
+.gb__b.is-hl { filter: saturate(1.25); }
+.gbars .gb__b.is-off, .gbars.has-s .gb__b.is-off { opacity: .1; pointer-events: none; }
+.gkey .gk { display: inline-flex; align-items: center; padding: 3px 11px; border: 1px solid var(--line-2); border-radius: 999px; background: transparent; font: inherit; color: var(--muted); transition: color .25s, border-color .25s, opacity .25s, transform .35s var(--ease); }
+.gkey .gk:hover { color: var(--ink); border-color: var(--amber-2); transform: translateY(-1px); }
+.gkey .gk.is-off { opacity: .45; text-decoration: line-through; }
+
+/* audit bar */
+.audit__bar > div { background: linear-gradient(180deg, color-mix(in srgb, var(--bc) 72%, var(--tint)), var(--bc)); cursor: pointer; transition: width 1.4s var(--ease-snap), opacity .3s, filter .3s; }
+.audit__bar > div.is-dim { opacity: .35; }
+.audit__bar > div:hover { filter: saturate(1.2) brightness(1.04); }
+.audit__key span { cursor: pointer; transition: opacity .3s; }
+.audit__key span.is-dim { opacity: .4; }
+
+/* butterfly */
+.fly__l i { background: linear-gradient(270deg, var(--amber), var(--amber-2)); }
+.fly__r i { background: linear-gradient(90deg, #a98bb0, var(--yellow)); }
+.fly__row { border-radius: 8px; transition: opacity .3s, background .3s; }
+.fly__row.is-hov { background: var(--chart-hi); }
+.fly.has-hov .fly__row:not(.is-hov) { opacity: .4; }
+.fly__any { transition: opacity .3s; }
+
+/* heat map */
+.heat__c { position: relative; transition: transform .5s var(--ease), opacity .5s, outline-color .2s, box-shadow .3s; }
+.heat.in .heat__c:hover { transform: scale(1.1); z-index: 2; box-shadow: 0 8px 18px -8px rgba(44, 28, 58, .45); }
+
+/* leader / compare chips */
+.chip { transition: background .25s, color .25s, border-color .25s, transform .35s var(--ease); }
+.chip:hover { transform: translateY(-1px); border-color: var(--amber-2); }
