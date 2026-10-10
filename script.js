@@ -170,16 +170,16 @@
     sb.addEventListener('click', () => sb.setAttribute('aria-pressed', String(sfx.toggle())));
     const yr = $('#year'); if (yr) yr.textContent = new Date().getFullYear();
 
-    /* Hy AI Studio reads ?prompt= on its chat home and pre-fills the input box
-       (logged-in users only; it does not auto-send). The prompt is also copied
-       on click so it can be pasted after logging in. Keep it free of "%":
-       the site decodes the value a second time. */
+    /* WorkBuddy's web app (www.workbuddy.cn/app) has no URL parameter for a
+       starting prompt, so the click opens it and copies the prompt with the
+       paper link to the clipboard; the user pastes it into the input box. */
     const ask = $('#askBtn');
     if (ask) {
       const site = 'https://compaction-eval.github.io/CompAct-Bench/';
       const prompt = `I'd like to discuss the paper "CompAct-Bench: A Benchmark for Working-Context Compaction in Long-Horizon Agent Tasks".\nPaper PDF: ${site}assets/compact-bench-paper.pdf\nProject page: ${site}\nPlease read it first, then answer my questions about it professionally in English, using markdown for structured answers.`;
-      ask.href = `https://aistudio.tencent.com/?utm_source=hy&prompt=${encodeURIComponent(prompt)}`;
-      ask.addEventListener('click', () => { copyText(prompt).then(ok => ok && toast('Prompt copied. Paste it into Hunyuan if the box is empty.')); });
+      ask.addEventListener('click', () => {
+        copyText(prompt).then(ok => toast(ok ? 'Prompt with the paper link copied. Paste it into WorkBuddy.' : 'Could not copy. Paper PDF: ' + site + 'assets/compact-bench-paper.pdf'));
+      });
     }
 
     /* nav: border after hero, progress, hide on scroll-down, active link */
