@@ -25,8 +25,8 @@
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = T.PCFSoftShadowMap;
   const THEMES = {
-    light: { bg: 0xf5f1f5, floor: 0xece5ee, g1: 0xddd3df, g2: 0xe8e0ea, sky: 0xffffff, gnd: 0xe6dde9, hemi: .78, paint: 'rgba(44,28,58,.07)' },
-    dark: { bg: 0x1e1a23, floor: 0x18141c, g1: 0x342d3b, g2: 0x2a2431, sky: 0xf4efe6, gnd: 0x241f2a, hemi: .6, paint: 'rgba(247,243,248,.07)' }
+    light: { bg: 0xf3f1ea, floor: 0xeae6db, g1: 0xdbd5c8, g2: 0xe6e1d2, sky: 0xffffff, gnd: 0xe3ddce, hemi: .78, paint: 'rgba(20,20,19,.07)' },
+    dark: { bg: 0x262624, floor: 0x1f1e1d, g1: 0x3a3936, g2: 0x2f2e2c, sky: 0xf4efe6, gnd: 0x2a2826, hemi: .6, paint: 'rgba(250,249,245,.07)' }
   };
   const themeOf = () => (document.documentElement.dataset.theme === 'dark' ? THEMES.dark : THEMES.light);
   let TH = themeOf();
@@ -55,13 +55,13 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => redraws.forEach(f => f()));
   const mStd = (color, o = {}) => new T.MeshStandardMaterial(Object.assign({ color, roughness: .7, metalness: 0 }, o));
   const M = {
-    metal: mStd(0x8b8591, { roughness: .6, metalness: .1 }),
-    metal2: mStd(0xb9b2be, { roughness: .62, metalness: .05 }),
-    cream: mStd(0xfbf9fc, { roughness: .8 }),
-    beige: mStd(0xeee7f0, { roughness: .75 }),
+    metal: mStd(0x8a867d, { roughness: .6, metalness: .1 }),
+    metal2: mStd(0xb8b3a7, { roughness: .62, metalness: .05 }),
+    cream: mStd(0xfaf9f5, { roughness: .8 }),
+    beige: mStd(0xece6da, { roughness: .75 }),
     red: mStd(0xac86b9, { roughness: .6 }),
-    dark: mStd(0x433c4a, { roughness: .9 }),
-    steel: mStd(0xd8d1dd, { roughness: .45, metalness: .25 })
+    dark: mStd(0x3d3d3a, { roughness: .9 }),
+    steel: mStd(0xd6d1c5, { roughness: .45, metalness: .25 })
   };
   const box = (w, h, d, mat, x, y, z, parent, shadow = true) => {
     const m = new T.Mesh(new T.BoxGeometry(w, h, d), mat);
@@ -115,7 +115,7 @@
   paintMesh.rotation.x = -Math.PI / 2; paintMesh.position.set(PX + 2.5, .014, BW / 2 + 2.9); scene.add(paintMesh);
   const rr = (g, x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
   const hazard = canvasTex(512, 320, (g, w, h) => {
-    rr(g, 6, 6, w - 12, h - 12, 40); g.fillStyle = '#ece5ee'; g.fill();
+    rr(g, 6, 6, w - 12, h - 12, 40); g.fillStyle = '#ebe6da'; g.fill();
     g.setLineDash([18, 14]); g.lineWidth = 4; g.strokeStyle = 'rgba(172,134,185,.7)';
     rr(g, 26, 26, w - 52, h - 52, 28); g.stroke();
   });
@@ -125,12 +125,12 @@
   /* ---------- conveyor ---------- */
   const L = BE - BS, MID = (BS + BE) / 2;
   const beltTex = canvasTex(256, 64, (g, w, h) => {
-    g.fillStyle = '#4a4551'; g.fillRect(0, 0, w, h);
-    g.fillStyle = '#585160';
+    g.fillStyle = '#4a4945'; g.fillRect(0, 0, w, h);
+    g.fillStyle = '#56554f';
     for (let i = 0; i < 8; i++) { const x = i * 32; g.beginPath(); g.moveTo(x, 0); g.lineTo(x + 14, h / 2); g.lineTo(x, h); g.lineTo(x + 8, h); g.lineTo(x + 22, h / 2); g.lineTo(x + 8, 0); g.fill(); }
   });
   beltTex.wrapS = T.RepeatWrapping; beltTex.repeat.set(L / 2, 1);
-  const beltSide = mStd(0x433c4a, { roughness: .85 });
+  const beltSide = mStd(0x3d3d3a, { roughness: .85 });
   const belt = new T.Mesh(new T.BoxGeometry(L, .16, BW), [beltSide, beltSide, mStd(0xffffff, { map: beltTex, roughness: .82, metalness: .1 }), beltSide, beltSide, beltSide]);
   belt.position.set(MID, BELT_Y - .08, 0); belt.receiveShadow = true; scene.add(belt);
   box(L + .6, .46, .24, M.metal2, MID, BELT_Y - .12, BW / 2 + .12);
@@ -146,10 +146,10 @@
   const tokMats = WORDS.map((w, i) => mStd(0xffffff, {
     roughness: .8,
     map: canvasTex(128, 128, g => {
-      g.fillStyle = '#fffdff'; g.fillRect(0, 0, 128, 128);
+      g.fillStyle = '#fdfcf8'; g.fillRect(0, 0, 128, 128);
       g.fillStyle = DCOL[i % 3]; g.fillRect(0, 112, 128, 16);
-      g.strokeStyle = '#ded5e1'; g.lineWidth = 4; g.strokeRect(2, 2, 124, 124);
-      g.fillStyle = '#1c1821'; g.font = `500 ${w.length > 5 ? 26 : w.length > 3 ? 34 : 44}px "JetBrains Mono", monospace`;
+      g.strokeStyle = '#ddd7ca'; g.lineWidth = 4; g.strokeRect(2, 2, 124, 124);
+      g.fillStyle = '#141413'; g.font = `500 ${w.length > 5 ? 26 : w.length > 3 ? 34 : 44}px "JetBrains Mono", monospace`;
       g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(w, 64, 56);
     })
   }));
@@ -185,7 +185,7 @@
   const head = new T.Group(); pressG.add(head);
   box(4.9, .56, 2.3, M.red, 0, 0, 0, head);
   const stripeTex = canvasTex(512, 32, (g, w, h) => {
-    g.fillStyle = '#fdfbfe'; g.fillRect(0, 0, w, h);
+    g.fillStyle = '#faf9f5'; g.fillRect(0, 0, w, h);
     g.fillStyle = '#8a6896'; for (let x = 24; x < w; x += 40) { g.beginPath(); g.arc(x, h / 2, 5, 0, Math.PI * 2); g.fill(); }
   });
   const stripe = new T.Mesh(new T.PlaneGeometry(4.9, .22), new T.MeshStandardMaterial({ map: stripeTex, roughness: .6 }));
@@ -235,7 +235,7 @@
   /* ---------- M_b blocks ---------- */
   const blockLabel = canvasTex(256, 192, (g, w, h) => {
     g.fillStyle = '#ac86b9'; g.fillRect(0, 0, w, h);
-    g.fillStyle = '#fdfbfe'; g.fillRect(0, h - 30, w, 30);
+    g.fillStyle = '#faf9f5'; g.fillRect(0, h - 30, w, 30);
     g.font = 'italic 400 80px "Source Serif 4", Georgia, serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
     g.fillText('M', w / 2 - 12, h / 2 - 16);
     g.font = 'italic 400 44px "Source Serif 4", Georgia, serif'; g.fillText('b', w / 2 + 30, h / 2 + 4);
@@ -258,13 +258,13 @@
   let comboI = (Math.random() * combos.length) | 0;
   const scr = { mode: 'idle', k: 0, B: 10, plan: { ok: true, early: false, k: 0 }, combo: combos[comboI], blink: true };
   const UI = 'Inter, system-ui, sans-serif', SERIF = '"Source Serif 4", Georgia, serif', MONO = '"JetBrains Mono", monospace';
-  const OKC = '#5e7d4a', BADC = '#bf4d43', CLAY = '#ac86b9', INK = '#1c1821', MUT = '#7b7482';
+  const OKC = '#5e7d4a', BADC = '#bf4d43', CLAY = '#ac86b9', INK = '#141413', MUT = '#73726c';
   const scrTex = canvasTex(512, 376, (g, w, h) => {
-    g.fillStyle = '#fdfbfe'; g.fillRect(0, 0, w, h);
+    g.fillStyle = '#faf9f5'; g.fillRect(0, 0, w, h);
     const [d, b] = scr.combo;
     g.fillStyle = MUT; g.font = `500 22px ${UI}`;
     g.fillText(`Executor · ${DOM[d].bench} · b = ${BND[b]}`, 28, 44);
-    g.fillStyle = 'rgba(44,28,58,.1)'; g.fillRect(28, 60, w - 56, 2);
+    g.fillStyle = 'rgba(20,20,19,.1)'; g.fillRect(28, 60, w - 56, 2);
     if (scr.mode === 'idle') {
       g.fillStyle = INK; g.font = `400 76px ${SERIF}`; g.fillText('Ready' + (scr.blink ? '.' : ''), 28, 152);
       g.fillStyle = MUT; g.font = `italic 400 30px ${SERIF}`; g.fillText('Waiting for the next memory…', 28, 200);
@@ -278,7 +278,7 @@
       g.fillText(`› resume · budget ${scr.B}`, 28, 172);
       const gap = 8, cw = (w - 56 - (scr.B - 1) * gap) / scr.B, pl = scr.plan;
       for (let i = 0; i < scr.B; i++) {
-        let col = 'rgba(44,28,58,.08)';
+        let col = 'rgba(20,20,19,.08)';
         if (i < scr.k) {
           if (pl.ok) col = OKC;
           else if (i === pl.k - 1 && scr.k >= pl.k) col = BADC;
@@ -321,8 +321,8 @@
   /* result sprites */
   const glyph = ok => canvasTex(256, 256, g => {
     g.fillStyle = ok ? '#5e7d4a' : '#bf4d43'; g.beginPath(); g.arc(128, 128, 112, 0, Math.PI * 2); g.fill();
-    g.lineWidth = 8; g.strokeStyle = '#fdfbfe'; g.stroke();
-    g.strokeStyle = '#fdfbfe'; g.lineWidth = 22; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath();
+    g.lineWidth = 8; g.strokeStyle = '#faf9f5'; g.stroke();
+    g.strokeStyle = '#faf9f5'; g.lineWidth = 22; g.lineCap = 'round'; g.lineJoin = 'round'; g.beginPath();
     if (ok) { g.moveTo(74, 132); g.lineTo(112, 172); g.lineTo(184, 88); } else { g.moveTo(84, 84); g.lineTo(172, 172); g.moveTo(172, 84); g.lineTo(84, 172); }
     g.stroke();
   });

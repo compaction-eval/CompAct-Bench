@@ -700,11 +700,7 @@
      reveal / counters / math
      ------------------------------------------------------------------ */
   function reveal() {
-    $$('.cart').forEach((el, i) => { el.classList.add('reveal'); el.dataset.d = String(i % 4 + 1); });
-    $$('.reveal').forEach(el => onceVisible(el, () => {
-      el.classList.add('in');
-      setTimeout(() => { el.style.transitionDelay = '0s'; }, 1700);
-    }, { threshold: .08, rootMargin: '0px 0px -6% 0px' }));
+    $$('.reveal').forEach(el => onceVisible(el, () => el.classList.add('in'), { threshold: .08, rootMargin: '0px 0px -6% 0px' }));
     $$('[data-count]').forEach(el => onceVisible(el, () => {
       const raw = el.dataset.count, target = parseFloat(raw);
       const dec = (raw.split('.')[1] || '').length;
@@ -715,88 +711,6 @@
   function math() {
     if (typeof window.renderMathInElement !== 'function') return;
     window.renderMathInElement(document.body, { delimiters: [{ left: '$$', right: '$$', display: true }], throwOnError: false });
-  }
-
-  /* ------------------------------------------------------------------
-     polish: pointer spotlight, card tilt, magnetic buttons, ripple,
-     cursor glow, section-index parallax
-     ------------------------------------------------------------------ */
-  function fx() {
-    if (REDUCED) return;
-    const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    const glow = document.createElement('div');
-    glow.className = 'cursor-glow'; glow.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(glow);
-
-    let gx = 0, gy = 0, tx = 0, ty = 0, raf = 0;
-    const loop = () => {
-      gx += (tx - gx) * .14; gy += (ty - gy) * .14;
-      glow.style.transform = `translate3d(${gx}px, ${gy}px, 0)`;
-      raf = (Math.abs(tx - gx) + Math.abs(ty - gy) > .4) ? requestAnimationFrame(loop) : 0;
-    };
-    const SPOT = '.panel, .cart__shell, .path, .mcard, .pipe__node, .mission';
-
-    if (fine) {
-      document.addEventListener('pointermove', e => {
-        tx = e.clientX; ty = e.clientY;
-        glow.classList.add('on');
-        if (!raf) raf = requestAnimationFrame(loop);
-
-        const t = e.target.closest ? e.target.closest(SPOT) : null;
-        if (t) {
-          const r = t.getBoundingClientRect();
-          t.style.setProperty('--px', (e.clientX - r.left) + 'px');
-          t.style.setProperty('--py', (e.clientY - r.top) + 'px');
-          const cart = t.closest('.cart');
-          if (cart) {
-            const nx = (e.clientX - r.left) / r.width - .5, ny = (e.clientY - r.top) / r.height - .5;
-            cart.style.setProperty('--ry', (nx * 9).toFixed(2) + 'deg');
-            cart.style.setProperty('--rx', (-ny * 9).toFixed(2) + 'deg');
-          }
-        }
-
-        const b = e.target.closest ? e.target.closest('.btn') : null;
-        if (b && !b.disabled) {
-          const r = b.getBoundingClientRect();
-          b.style.setProperty('--mx', ((e.clientX - (r.left + r.width / 2)) * .12).toFixed(1) + 'px');
-          b.style.setProperty('--my', ((e.clientY - (r.top + r.height / 2)) * .2).toFixed(1) + 'px');
-        }
-      }, { passive: true });
-      document.addEventListener('pointerout', e => {
-        const b = e.target.closest ? e.target.closest('.btn') : null;
-        if (b && !b.contains(e.relatedTarget)) { b.style.setProperty('--mx', '0px'); b.style.setProperty('--my', '0px'); }
-        const c = e.target.closest ? e.target.closest('.cart') : null;
-        if (c && !c.contains(e.relatedTarget)) { c.style.setProperty('--rx', '0deg'); c.style.setProperty('--ry', '0deg'); }
-      });
-      document.documentElement.addEventListener('mouseleave', () => glow.classList.remove('on'));
-    }
-
-    document.addEventListener('pointerdown', e => {
-      const b = e.target.closest ? e.target.closest('.btn') : null;
-      if (!b || b.disabled) return;
-      const r = b.getBoundingClientRect(), d = Math.max(r.width, r.height) * 2.2;
-      const s = document.createElement('span');
-      s.className = 'rip';
-      s.style.cssText = `width:${d}px;height:${d}px;left:${e.clientX - r.left - d / 2}px;top:${e.clientY - r.top - d / 2}px`;
-      b.appendChild(s);
-      setTimeout(() => s.remove(), 800);
-    });
-
-    const idx = $$('.sidx');
-    let pt = false;
-    const par = () => {
-      pt = false;
-      const vh = window.innerHeight;
-      idx.forEach(el => {
-        const sec = el.closest('.section'); if (!sec) return;
-        const r = sec.getBoundingClientRect();
-        if (r.bottom < 0 || r.top > vh) return;
-        const k = clamp((vh / 2 - (r.top + r.height / 2)) / (vh + r.height), -1, 1);
-        el.style.transform = `translateY(${(k * -28).toFixed(1)}px)`;
-      });
-    };
-    window.addEventListener('scroll', () => { if (!pt) { pt = true; requestAnimationFrame(par); } }, { passive: true });
-    par();
   }
 
   chrome();
@@ -811,5 +725,4 @@
   persist();
   failures();
   reveal();
-  fx();
 })();
